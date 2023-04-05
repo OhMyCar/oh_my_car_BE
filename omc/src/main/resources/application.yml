@@ -1,1 +1,28 @@
 
+
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://127.0.0.1:3306/omc
+    username: pu
+    password: a1234
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hennessy.testacc@gmail.com
+    password:
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+logging:
+  level:
+    org.hibernate.sql: debug
+    org.hibernate.type: trace
