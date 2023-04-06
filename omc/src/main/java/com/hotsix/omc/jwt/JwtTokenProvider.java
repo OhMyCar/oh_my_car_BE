@@ -57,6 +57,7 @@ public class JwtTokenProvider {
                 .setExpiration(tokenExpireIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+        log.info("token : " + token);
 
         return TokenInfo.builder()
                 .grantType(BEARER_TYPE)

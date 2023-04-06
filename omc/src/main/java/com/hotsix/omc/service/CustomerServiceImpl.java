@@ -71,6 +71,17 @@ public class CustomerServiceImpl implements CustomerService, UserDetailsService 
         return Response.from(request);
     }
 
+    @Override
+    public String emailAuth(String uuid) {
+        Optional<Customer> optionalCustomer = customerRepository.findByEmailAuthKey(uuid);
+        if(!optionalCustomer.isPresent()){
+            throw new UsersException(BAD_REQUEST);
+        }
+        Customer customer = optionalCustomer.get();
+        return customer.getEmailAuthKey();
+    }
+
+
     public TokenInfo login(String email, String password){
         // id, pw 기반 Authentication 객체생성
         UsernamePasswordAuthenticationToken authenticationToken =

@@ -38,7 +38,8 @@ public class SecurityConfig {
                         "customer/signup",
                         "seller/login",
                         "seller/signup",
-                        "/swagger-resources/**")
+                        "/swagger-resources/**",
+                        "/**")
                 .permitAll()
                         .antMatchers("/customer/**")
                                 .hasAnyRole("CUSTOMER")
