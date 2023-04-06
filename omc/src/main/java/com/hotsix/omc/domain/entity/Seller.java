@@ -23,6 +23,7 @@ public class Seller extends BaseEntity {
     private String email;
     private String password;
     private String phone;
+    private String emailAuthKey;
     @OneToMany(mappedBy = "seller")
     private List<Store> stores = new ArrayList<>();
     @Enumerated(EnumType.STRING)

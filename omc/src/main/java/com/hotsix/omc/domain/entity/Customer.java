@@ -21,8 +21,11 @@ public class Customer extends BaseEntity {
     private Long id;
     @Column(unique = true)
     private String email;
+    private String name;
     private String password;
     private String phone;
+    private String emailAuthKey;
+
     @OneToMany(mappedBy = "customer")
     private List<Car> cars = new ArrayList<>();
     @OneToMany List<Reservation> reservations = new ArrayList<>();
