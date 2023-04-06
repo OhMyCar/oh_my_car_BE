@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 
@@ -15,6 +16,7 @@ public class CustomerSignupForm {
     @NoArgsConstructor
     public static class Request {
         @NotBlank(message = "이메일은 필수 입력값입니다.")
+        @Email
         private String email;
         @NotBlank(message = "이름을 입력해주세요.")
         private String name;
@@ -32,6 +34,7 @@ public class CustomerSignupForm {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Response {
+        @Email
         private String email;
         private String name;
 
