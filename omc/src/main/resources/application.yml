@@ -1,28 +1,39 @@
 
-
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://127.0.0.1:3306/omc
     username: pu
     password: a1234
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hennessy.testacc@gmail.com
+    password: wjysucdhplahgpmo
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   jpa:
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
         format_sql:
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: hennessy.testacc@gmail.com
-    password:
-    properties:
-      mail:
-        smtp:
-          starttls:
-            enable: true
 logging:
   level:
     org.hibernate.sql: debug
     org.hibernate.type: trace
+
+jwt:
+  secret: IduEyVBsRt9V7zq575ejMneUyzblYcfP80Q8f7MGVA9XkHa
+  token-expire-time: 86400000
+
+
+---
