@@ -41,7 +41,7 @@ public class CustomerSignupForm {
         public static Response from(Request request){
             return Response.builder()
                     .email(request.email)
-                    .email(request.name)
+                    .name(request.name)
                     .build();
         }
     }
