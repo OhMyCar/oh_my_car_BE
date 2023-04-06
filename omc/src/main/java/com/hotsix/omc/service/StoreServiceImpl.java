@@ -7,13 +7,10 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 
 @Service
+@RequiredArgsConstructor
 public class StoreServiceImpl implements StoreService {
 
-    private StoreRepository storeRepository;
-
-    public StoreServiceImpl(StoreRepository storeRepository) {
-        this.storeRepository = storeRepository;
-    }
+    private final StoreRepository storeRepository;
 
     @Override
     public void deleteStore(Long id) {
