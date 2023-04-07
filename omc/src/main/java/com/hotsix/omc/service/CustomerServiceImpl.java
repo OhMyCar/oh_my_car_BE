@@ -48,13 +48,14 @@ public class CustomerServiceImpl implements CustomerService, UserDetailsService 
         if (optionalCustomer.isPresent()){
             throw new UsersException(ALREADY_EXIST_USER);
         }
-        String encPw = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt());
+//        String encPw = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt());
         String uuid = UUID.randomUUID().toString();
 
         Customer customer = Customer.builder()
                 .email(request.getEmail())
                 .name(request.getName())
-                .password(encPw)
+                .password(request.getPassword())
+//                .password(encPw)
                 .phone(request.getPhone())
                 .emailAuthKey(uuid)
                 .Auth(UNAUTHORIZED)

@@ -14,6 +14,7 @@ import com.hotsix.omc.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
@@ -46,5 +47,13 @@ public class SellerServiceImpl implements SellerService {
     @Override
     public Response updateStore(StoreRegisterForm.Request request) {
         return null;
+    }
+
+    @Override
+    public void deleteStore(Long id) {
+        Store existingStore = storeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Store not found with id " + id));
+
+        storeRepository.delete(existingStore);
     }
 }
