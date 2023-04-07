@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +23,8 @@ public class Store extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SELLER_ID")
     private Seller seller;
-    private LocalDateTime open;
-    private LocalDateTime close;
+    private String open;
+    private String close;
     private double rating;
     private String name;
     private String tel;
@@ -33,6 +32,8 @@ public class Store extends BaseEntity {
     private List<Reservation> reservations = new ArrayList<>();
     @Embedded
     private Address address;
+    @ElementCollection
     @Enumerated(EnumType.STRING)
-    private Category category;
+    private List<Category> categories;
+
 }
