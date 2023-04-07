@@ -45,8 +45,24 @@ public class SellerServiceImpl implements SellerService {
     }
 
     @Override
-    public Response updateStore(StoreRegisterForm.Request request) {
-        return null;
+    public Response updateStore(StoreRegisterForm.Request request, Long id) {
+        Seller seller = sellerRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UsersException(ErrorCode.SELLER_NOT_FOUND));
+        Store store = storeRepository.findByIdAndSellerId(id, seller.getId())
+                .orElseThrow(() -> new UsersException(ErrorCode.STORE_NOT_FOUND));
+        Address address = new Address(request.getCity(), request.getStreet(), request.getZipcode());
+        List<Category> category = Category.of(request);
+
+        store.setOpen(request.getOpen());
+        store.setClose(request.getClose());
+        store.setName(request.getName());
+        store.setTel(request.getTel());
+        store.setAddress(address);
+        store.setCategories(category);
+
+        storeRepository.save(store);
+
+        return Response.from(request);
     }
 
     @Override

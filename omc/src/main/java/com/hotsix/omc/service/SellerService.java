@@ -5,6 +5,6 @@ import com.hotsix.omc.domain.form.seller.StoreRegisterForm.Response;
 
 public interface SellerService {
     public Response registerStore(StoreRegisterForm.Request request);
-    public Response updateStore(StoreRegisterForm.Request request);
+    public Response updateStore(StoreRegisterForm.Request request, Long id);
     void deleteStore(Long id);
 }

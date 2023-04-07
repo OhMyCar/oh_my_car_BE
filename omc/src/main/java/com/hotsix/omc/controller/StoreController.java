@@ -21,6 +21,12 @@ private final SellerService sellerService;
         return ResponseEntity.ok(sellerService.registerStore(request));
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<StoreRegisterForm.Response> updateStore(@RequestBody @Valid StoreRegisterForm.Request request, @PathVariable Long id) {
+        return ResponseEntity.ok(sellerService.updateStore(request, id));
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteStore(@PathVariable Long id) {
         sellerService.deleteStore(id);
