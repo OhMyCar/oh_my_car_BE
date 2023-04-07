@@ -1,6 +1,6 @@
 package com.hotsix.omc.domain.entity;
 
-import com.hotsix.omc.store.model.StoreRegisterForm;
+import com.hotsix.omc.domain.form.seller.StoreRegisterForm;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,22 +8,22 @@ import java.util.List;
 public enum Category {
     MAINTENANCE, PAINT, TUNING, WASH, NEW_CAR_PACKAGE;
 
-    public static List<Category> of(StoreRegisterForm form) {
+    public static List<Category> of(StoreRegisterForm.Request request) {
         List<Category> category = new ArrayList<>();
 
-        if (form.isCategory1()) {
+        if (request.isCategory1()) {
             category.add(Category.MAINTENANCE);
         }
-        if (form.isCategory2()) {
+        if (request.isCategory2()) {
             category.add(Category.PAINT);
         }
-        if (form.isCategory3()) {
+        if (request.isCategory3()) {
             category.add(Category.TUNING);
         }
-        if (form.isCategory4()) {
+        if (request.isCategory4()) {
             category.add(Category.WASH);
         }
-        if (form.isCategory5()) {
+        if (request.isCategory5()) {
             category.add(Category.NEW_CAR_PACKAGE);
         }
         return category;
