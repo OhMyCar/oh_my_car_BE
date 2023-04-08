@@ -25,6 +25,8 @@ public class Customer extends BaseEntity {
     private String password;
     private String phone;
     private String emailAuthKey;
+    @Column(unique = true)
+    private String nickname;
 
     @OneToMany(mappedBy = "customer")
     private List<Car> cars = new ArrayList<>();

@@ -1,9 +1,9 @@
 package com.hotsix.omc.config;
 
-import com.hotsix.omc.jwt.JwtAuthenticationEntryPoint;
-import com.hotsix.omc.jwt.JwtAuthenticationFilter;
-import com.hotsix.omc.jwt.JwtExceptionFilter;
-import com.hotsix.omc.jwt.JwtTokenProvider;
+import com.hotsix.omc.config.jwt.JwtAuthenticationEntryPoint;
+import com.hotsix.omc.config.jwt.JwtAuthenticationFilter;
+import com.hotsix.omc.config.jwt.JwtExceptionFilter;
+import com.hotsix.omc.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

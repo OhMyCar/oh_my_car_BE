@@ -1,4 +1,4 @@
-package com.hotsix.omc.jwt;
+package com.hotsix.omc.config.jwt;
 
 
 import com.hotsix.omc.domain.form.token.TokenInfo;

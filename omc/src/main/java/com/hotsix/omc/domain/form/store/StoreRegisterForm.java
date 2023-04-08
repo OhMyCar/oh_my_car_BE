@@ -1,4 +1,4 @@
-package com.hotsix.omc.store.model;
+package com.hotsix.omc.domain.form.store;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
