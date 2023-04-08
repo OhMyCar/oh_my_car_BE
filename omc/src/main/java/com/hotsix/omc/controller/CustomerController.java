@@ -4,7 +4,7 @@ import com.hotsix.omc.domain.form.customer.CustomerLoginForm;
 import com.hotsix.omc.domain.form.customer.CustomerSignupForm.Request;
 import com.hotsix.omc.domain.form.customer.CustomerSignupForm.Response;
 import com.hotsix.omc.domain.form.token.TokenInfo;
-import com.hotsix.omc.service.CustomerServiceImpl;
+import com.hotsix.omc.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ import javax.validation.Valid;
 @RequestMapping("/customer")
 @Slf4j
 public class CustomerController {
-    private final CustomerServiceImpl customerService;
+    private final CustomerService customerService;
     @PostMapping("/signup")
     public ResponseEntity<Response> registerMember(
             @RequestBody @Valid Request request) {

@@ -1,5 +1,6 @@
 package com.hotsix.omc.domain.entity;
 
+
 import com.hotsix.omc.domain.form.seller.StoreRegisterForm;
 
 import java.util.ArrayList;
