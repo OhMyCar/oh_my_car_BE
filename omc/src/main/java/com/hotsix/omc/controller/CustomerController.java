@@ -1,12 +1,15 @@
 package com.hotsix.omc.controller;
 
+import com.hotsix.omc.domain.form.customer.CustomerDeleteForm;
 import com.hotsix.omc.domain.form.customer.CustomerLoginForm;
 import com.hotsix.omc.domain.form.customer.CustomerSignupForm.Request;
 import com.hotsix.omc.domain.form.customer.CustomerSignupForm.Response;
 import com.hotsix.omc.domain.form.token.TokenInfo;
 import com.hotsix.omc.service.CustomerService;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,5 +42,11 @@ public class CustomerController {
 
         String emailAuthKey = customerService.emailAuth(uuid);
         return ResponseEntity.ok(emailAuthKey);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity delete(@PathVariable Long id) throws Exception {
+        CustomerDeleteForm form = customerService.delete(id);
+        return new ResponseEntity(form, HttpStatus.OK);
     }
 }
