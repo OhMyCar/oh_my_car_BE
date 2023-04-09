@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.hotsix.omc.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.hotsix.omc.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/oh_my_car_BE-1.iml" filepath="$PROJECT_DIR$/.idea/oh_my_car_BE-1.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/omc.main.iml" filepath="$PROJECT_DIR$/.idea/modules/omc.main.iml" />
     </modules>
