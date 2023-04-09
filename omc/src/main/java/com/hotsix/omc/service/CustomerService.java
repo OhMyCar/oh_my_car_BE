@@ -3,6 +3,7 @@ package com.hotsix.omc.service;
 import com.hotsix.omc.components.MailComponents;
 import com.hotsix.omc.domain.entity.Customer;
 import com.hotsix.omc.domain.entity.Seller;
+import com.hotsix.omc.domain.form.customer.CustomerDeleteForm;
 import com.hotsix.omc.domain.form.customer.CustomerSignupForm;
 import com.hotsix.omc.domain.form.customer.CustomerSignupForm.Response;
 import com.hotsix.omc.domain.form.token.TokenInfo;
@@ -136,5 +137,13 @@ public class CustomerService implements UserDetailsService, PasswordService {
                     sellerGrantedAuthorities);
         }
         return null;
+    }
+
+    public CustomerDeleteForm delete(Long id) {
+        Customer customer = customerRepository.findById(id)
+            .orElseThrow(() -> new UsersException(EMAIL_NOT_EXIST));
+
+        customerRepository.delete(customer);
+        return new CustomerDeleteForm(customer);
     }
 }
