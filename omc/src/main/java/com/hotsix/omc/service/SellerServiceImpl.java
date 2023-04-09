@@ -1,6 +1,7 @@
 package com.hotsix.omc.service;
 
 
+import com.hotsix.omc.domain.dto.StoreDto;
 import com.hotsix.omc.domain.entity.Address;
 import com.hotsix.omc.domain.entity.Category;
 import com.hotsix.omc.domain.entity.Seller;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -63,6 +65,27 @@ public class SellerServiceImpl implements SellerService {
         storeRepository.save(store);
 
         return Response.from(request);
+    }
+
+    @Override
+    public List<StoreDto> getInfo(Long sellerId) {
+        Seller seller = sellerRepository.findById(sellerId)
+                .orElseThrow(() -> new UsersException(ErrorCode.SELLER_NOT_FOUND));
+        List<Store> stores = storeRepository.findBySellerId(sellerId);
+
+        List<StoreDto> infoList = new ArrayList<>();
+        for (int i = 0; i < stores.size(); i++) {
+            infoList.add(StoreDto.builder()
+                    .name(stores.get(i).getName())
+                    .open(stores.get(i).getOpen())
+                    .close(stores.get(i).getClose())
+                    .tel(stores.get(i).getTel())
+                    .address(stores.get(i).getAddress())
+                    .categories(stores.get(i).getCategories())
+                    .build());
+        }
+
+        return infoList;
     }
 
     @Override

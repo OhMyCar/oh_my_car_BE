@@ -39,3 +39,7 @@ Content-Type: application/json
   "category5" : true
 
 }
+
+### 업체 조회
+GET http://localhost:8080/store/getInfo/1
+Content-Type: application/json
