@@ -3,9 +3,9 @@ package com.hotsix.omc.service;
 import com.hotsix.omc.components.MailComponents;
 import com.hotsix.omc.domain.entity.Customer;
 import com.hotsix.omc.domain.entity.Seller;
-import com.hotsix.omc.domain.form.customer.CustomerDeleteForm;
 import com.hotsix.omc.domain.form.customer.CustomerSignupForm;
 import com.hotsix.omc.domain.form.customer.CustomerSignupForm.Response;
+import com.hotsix.omc.domain.form.customer.CustomerUpdateForm;
 import com.hotsix.omc.domain.form.token.TokenInfo;
 import com.hotsix.omc.exception.UsersException;
 import com.hotsix.omc.config.jwt.JwtTokenProvider;
@@ -139,11 +139,24 @@ public class CustomerService implements UserDetailsService, PasswordService {
         return null;
     }
 
-    public CustomerDeleteForm delete(Long id) {
+    public Customer delete (Long id) {
         Customer customer = customerRepository.findById(id)
             .orElseThrow(() -> new UsersException(EMAIL_NOT_EXIST));
 
         customerRepository.delete(customer);
-        return new CustomerDeleteForm(customer);
+        return customer;
+    }
+
+    public Customer update (CustomerUpdateForm form, Long id) {
+        Customer customer = customerRepository.findById(id)
+            .orElseThrow(() -> new UsersException(EMAIL_NOT_EXIST));
+
+        String encPw = BCrypt.hashpw(form.getPassword(), BCrypt.gensalt());
+
+        customer.setPassword(encPw);
+        customer.setPhone(form.getPhone());
+        customerRepository.save(customer);
+
+        return customer;
     }
 }
