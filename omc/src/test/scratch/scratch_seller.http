@@ -18,3 +18,31 @@ Content-Type: application/json
   "category5" : true
 
 }
+
+### 업체 정보 변경
+PUT http://localhost:8080/store/update/1
+Content-Type: application/json
+
+{
+  "email" : "test@test.com",
+  "open" : "10:00",
+  "close" :"17:00",
+  "name" : "test",
+  "tel" : "02-000-0000",
+  "city" : "서울",
+  "street" : "강남대로",
+  "zipcode" : "00000",
+  "category1" : true,
+  "category2" : false,
+  "category3" : true,
+  "category4" : false,
+  "category5" : true
+
+}
+
+### 업체 조회
+GET http://localhost:8080/store/getInfo/1
+Content-Type: application/json
+
+### 업체 삭제
+DELETE http://localhost:8080/store/1
