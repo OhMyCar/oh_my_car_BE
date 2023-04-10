@@ -26,4 +26,18 @@ public class ReservationController {
         return ResponseEntity.ok(reservationResponseDto);
     }
 
+    @GetMapping("/{customerId}/reserve")
+    public ResponseEntity<List<ReservationStoreResponseDto>> getReservation(
+            @PathVariable Long customerId,
+            @RequestParam(required = false, defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime reservedAt,
+            @RequestParam(required = false) ReservationStatus status
+    )
+    {
+        List<ReservationStoreResponseDto> responseDtoList = reservationService.getReservation(
+                customerId,
+                reservedAt,
+                status);
+        return ResponseEntity.ok(responseDtoList);
+    }
+
 }

@@ -61,4 +61,37 @@ public class ReservationService {
 
         }
     }
+
+    public List<ReservationStoreResponseDto> getReservation(Long customerId,
+                                                            LocalDateTime reservedAt,
+                                                            ReservationStatus status) {
+        // 리포지토리에 존재하는 customerId인지 확인
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid user id"));
+
+        // 리포지토리에서 예약정보(기입한 날짜로 부터 최근1년간의 예약정보 불러오기)
+        LocalDateTime from = LocalDateTime.of(reservedAt.toLocalDate().minusYears(1), LocalTime.MIN);
+        LocalDateTime to = LocalDateTime.of(reservedAt.toLocalDate(), LocalTime.MAX);
+
+        List<Reservation> reservations = reservationRepository.findReservationByCustomerAndReservedAtBetweenAndStatus(
+                customer,
+                from,
+                to,
+                status
+        );
+
+        // 불러온 예약정보 반복문으로 리스트로 만들기
+        List<ReservationStoreResponseDto> storeResponseDtos = new ArrayList<>();
+        for (Reservation reservation : reservations) {
+            ReservationStoreResponseDto storeResponseDto = ReservationStoreResponseDto.builder()
+                    .customerId(customer.getId())
+                    .storeId(reservation.getStore().getId())
+                    .name(reservation.getStore().getName())
+                    .status(reservation.getStatus())
+                    .reservedAt(reservation.getReservedAt())
+                    .build();
+            storeResponseDtos.add(storeResponseDto);
+        }
+        return storeResponseDtos;
+    }
 }
