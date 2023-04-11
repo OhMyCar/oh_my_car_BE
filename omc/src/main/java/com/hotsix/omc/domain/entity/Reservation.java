@@ -28,5 +28,6 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
     private String details;
-
+    private String serviceStartHour;
+    private String serviceEndHour;
 }
