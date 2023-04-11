@@ -1,14 +1,13 @@
 package com.hotsix.omc.service;
 
 import com.hotsix.omc.components.MailComponents;
+import com.hotsix.omc.config.jwt.JwtTokenProvider;
 import com.hotsix.omc.domain.entity.Customer;
-import com.hotsix.omc.domain.entity.Seller;
 import com.hotsix.omc.domain.form.customer.CustomerDeleteForm;
 import com.hotsix.omc.domain.form.customer.CustomerSignupForm;
 import com.hotsix.omc.domain.form.customer.CustomerSignupForm.Response;
 import com.hotsix.omc.domain.form.token.TokenInfo;
 import com.hotsix.omc.exception.UsersException;
-import com.hotsix.omc.config.jwt.JwtTokenProvider;
 import com.hotsix.omc.repository.CustomerRepository;
 import com.hotsix.omc.repository.SellerRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +35,7 @@ import static com.hotsix.omc.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
-public class CustomerService implements UserDetailsService, PasswordService {
+public class CustomerService implements UserDetailsService {
     private final CustomerRepository customerRepository;
     private final MailComponents mailComponents;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -72,11 +71,6 @@ public class CustomerService implements UserDetailsService, PasswordService {
         return Response.from(request);
     }
 
-    @Override
-    @Transactional
-    public void changePassword(String email, String password) {
-
-    }
 
     public String emailAuth(String uuid) {
         Optional<Customer> optionalCustomer = customerRepository.findByEmailAuthKey(uuid);
@@ -114,7 +108,6 @@ public class CustomerService implements UserDetailsService, PasswordService {
 
     @Override
     public UserDetails loadUserByUsername(String email) {
-        if (customerRepository.findByEmail(email).isPresent()){
         Customer customer = customerRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("EMAiL NOT FOUND -> " + email));
@@ -124,19 +117,6 @@ public class CustomerService implements UserDetailsService, PasswordService {
             return new User(customer.getEmail(),
                     customer.getPassword(),
                     customerGrantedAuthorities);
-        }
-
-        else if (sellerRepository.findByEmail(email).isPresent()) {
-            Seller seller = sellerRepository.findByEmail(email)
-                    .orElseThrow(() -> new UsernameNotFoundException("EMAiL NOT FOUND -> " + email));
-
-            List<GrantedAuthority> sellerGrantedAuthorities = new ArrayList<>();
-            sellerGrantedAuthorities.add(new SimpleGrantedAuthority("ROLE_SELLER"));
-            return new User(seller.getEmail(),
-                    seller.getPassword(),
-                    sellerGrantedAuthorities);
-        }
-        return null;
     }
 
     public CustomerDeleteForm delete(Long id) {
