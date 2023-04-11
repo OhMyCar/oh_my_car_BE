@@ -40,4 +40,9 @@ public class ReservationController {
         return ResponseEntity.ok(responseDtoList);
     }
 
+    @PutMapping("/reservation/{id}/cancel")
+    public ResponseEntity<ReservationResponseDto> cancelReservation(@PathVariable Long id) {
+        ReservationResponseDto reservationResponseDto = reservationService.cancelReservation(id);
+        return ResponseEntity.ok(reservationResponseDto);
+    }
 }
