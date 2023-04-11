@@ -28,17 +28,20 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
     private final Key key;
     private final long TOKEN_EXPIRE_TIME;
+    private final long REFRESH_TOKEN_EXPIRE_TIME;
     private final static String AUTH = "auth";
     private final static String BEARER_TYPE = "Bearer";
 
 
     public JwtTokenProvider(
             @Value("${jwt.secret}") String secretKey,
-            @Value("${jwt.token-expire-time}") long accessTime){
+            @Value("${jwt.access-token-expire-time}") long accessTime,
+            @Value("${jwt.refresh-token-expire-time}") long refreshTime){
 
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.TOKEN_EXPIRE_TIME = accessTime;
+        this.REFRESH_TOKEN_EXPIRE_TIME = refreshTime;
     }
 
     // 유저 정보로 권한 토큰 생성
@@ -50,18 +53,25 @@ public class JwtTokenProvider {
         long now = Instant.now().toEpochMilli();
 
         // 토큰 생성, 유효기간 1일
-        Date tokenExpireIn = new Date(now + TOKEN_EXPIRE_TIME);
-        String token = Jwts.builder()
+        Date accessTokenExpireIn = new Date(now + TOKEN_EXPIRE_TIME);
+        String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTH, authorities)
-                .setExpiration(tokenExpireIn)
+                .setExpiration(accessTokenExpireIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
-        log.info("token : " + token);
+        log.info("token : " + accessToken);
+
+        // refresh token 생성
+        String refreshToken = Jwts.builder()
+                .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
 
         return TokenInfo.builder()
                 .grantType(BEARER_TYPE)
-                .accessToken(token)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
