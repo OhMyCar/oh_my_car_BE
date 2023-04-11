@@ -1,9 +1,6 @@
 package com.hotsix.omc.service;
 
-import com.hotsix.omc.domain.entity.Customer;
-import com.hotsix.omc.domain.entity.Reservation;
-import com.hotsix.omc.domain.entity.ReservationStatus;
-import com.hotsix.omc.domain.entity.Store;
+import com.hotsix.omc.domain.entity.*;
 import com.hotsix.omc.domain.dto.ReservationRequestDto;
 import com.hotsix.omc.domain.dto.ReservationResponseDto;
 import com.hotsix.omc.domain.dto.ReservationStoreResponseDto;
@@ -93,5 +90,60 @@ public class ReservationService {
             storeResponseDtos.add(storeResponseDto);
         }
         return storeResponseDtos;
+    }
+
+    public ReservationStoreResponseDto confirmReservation(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid reservation id"));
+
+        reservation.setStatus(ReservationStatus.CONFIRM);
+        reservationRepository.save(reservation);
+
+        return ReservationStoreResponseDto.builder()
+                .customerId(reservation.getCustomer().getId())
+                .storeId(reservation.getStore().getId())
+                .name(reservation.getStore().getName())
+                .status(reservation.getStatus())
+                .reservedAt(reservation.getReservedAt())
+                .build();
+    }
+
+    public ReservationStoreResponseDto cancelReservation(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid reservation id"));
+
+        reservation.setStatus(ReservationStatus.CANCEL);
+        reservationRepository.save(reservation);
+
+        return ReservationStoreResponseDto.builder()
+                .customerId(reservation.getCustomer().getId())
+                .storeId(reservation.getStore().getId())
+                .name(reservation.getStore().getName())
+                .status(reservation.getStatus())
+                .reservedAt(reservation.getReservedAt())
+                .build();
+    }
+
+    public List<ReservationStoreResponseDto> getStoreReservations(Long storeId, LocalDateTime current, ReservationStatus reservationStatus) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid store id"));
+
+        LocalDateTime from = LocalDateTime.of(current.toLocalDate().minusYears(1), LocalTime.MIN);
+        LocalDateTime to = LocalDateTime.of(current.toLocalDate(), LocalTime.MAX);
+
+        List<Reservation> reservations = reservationRepository.findReservationByStoreAndReservedAtBetweenAndStatus(store, from, to, reservationStatus);
+
+        List<ReservationStoreResponseDto> storeResponseDtoList = new ArrayList<>();
+        for (Reservation reservation : reservations) {
+            ReservationStoreResponseDto storeResponseDto = ReservationStoreResponseDto.builder()
+                    .customerId(reservation.getCustomer().getId())
+                    .storeId(reservation.getStore().getId())
+                    .name(reservation.getStore().getName())
+                    .status(reservation.getStatus())
+                    .reservedAt(reservation.getReservedAt())
+                    .build();
+            storeResponseDtoList.add(storeResponseDto);
+        }
+        return storeResponseDtoList;
     }
 }
