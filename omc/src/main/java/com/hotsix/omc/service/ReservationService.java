@@ -44,6 +44,7 @@ public class ReservationService {
                 .details(reservationRequestDto.getDetails())
                 .serviceStartHour(reservationRequestDto.getServiceStartHour())
                 .serviceEndHour(reservationRequestDto.getServiceEndHour())
+                .serviceDate(reservationRequestDto.getServiceDate())
                 .build();
 
         try {
@@ -64,6 +65,7 @@ public class ReservationService {
 
     public List<ReservationStoreResponseDto> getReservation(Long customerId,
                                                             LocalDateTime reservedAt,
+                                                            LocalDate serviceDate,
                                                             ReservationStatus status) {
         // 리포지토리에 존재하는 customerId인지 확인
         Customer customer = customerRepository.findById(customerId)
@@ -89,6 +91,9 @@ public class ReservationService {
                     .name(reservation.getStore().getName())
                     .status(reservation.getStatus())
                     .reservedAt(reservation.getReservedAt())
+                    .serviceStartHour(reservation.getServiceStartHour())
+                    .serviceEndHour(reservation.getServiceEndHour())
+                    .serviceDate(reservation.getServiceDate())
                     .build();
             storeResponseDtos.add(storeResponseDto);
         }

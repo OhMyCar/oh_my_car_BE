@@ -33,4 +33,7 @@ public class Customer extends BaseEntity {
     @OneToMany List<Reservation> reservations = new ArrayList<>();
     @Enumerated(EnumType.STRING)
     private CustomerStatus Auth;
+
+    public void setId(long l) {
+    }
 }
