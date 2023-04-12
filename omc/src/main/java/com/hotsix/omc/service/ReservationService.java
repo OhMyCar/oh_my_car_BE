@@ -94,4 +94,46 @@ public class ReservationService {
         }
         return storeResponseDtos;
     }
+
+    public ReservationResponseDto cancelReservation(Long id) {
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reservation not found"));
+
+        // status = CANCEL인 경우(취소불가)
+        if (reservation.getStatus() == ReservationStatus.CANCEL) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reservation has already been cancelled");
+        }
+
+        // status = FINISH인 경우(취소불가)
+        if (reservation.getStatus() == ReservationStatus.FINISH) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reservation has already been finished");
+        }
+
+        Store store = reservation.getStore();
+        if (store == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reservation's store is null");
+        }
+
+        Customer customer = reservation.getCustomer();
+        if (customer == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reservation's customer is null");
+        }
+
+        // status가 REQUEST or CONFIRM 인 경우(취소가능)
+        if (reservation.getStatus() == ReservationStatus.REQUEST || reservation.getStatus() == ReservationStatus.CONFIRM) {
+            reservation.setStatus(ReservationStatus.CANCEL);
+            reservationRepository.save(reservation);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid status for cancel operation");
+        }
+
+        ReservationResponseDto reservationResponseDto = ReservationResponseDto.builder()
+                .customerId(reservation.getCustomer().getId())
+                .storeId(reservation.getStore().getId())
+                .status(reservation.getStatus())
+                .build();
+
+        return reservationResponseDto;
+    }
+
 }
