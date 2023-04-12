@@ -10,7 +10,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,14 +30,12 @@ public class ReservationController {
     public ResponseEntity<List<ReservationStoreResponseDto>> getReservation(
             @PathVariable Long customerId,
             @RequestParam(required = false, defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime reservedAt,
-            @RequestParam(required = false, defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,
             @RequestParam(required = false) ReservationStatus status
     )
     {
         List<ReservationStoreResponseDto> responseDtoList = reservationService.getReservation(
                 customerId,
                 reservedAt,
-                serviceDate,
                 status);
         return ResponseEntity.ok(responseDtoList);
     }

@@ -1,6 +1,9 @@
 package com.hotsix.omc.domain.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -30,7 +33,4 @@ public class Customer extends BaseEntity {
     @OneToMany List<Reservation> reservations = new ArrayList<>();
     @Enumerated(EnumType.STRING)
     private CustomerStatus Auth;
-
-    public void setId(long l) {
-    }
 }

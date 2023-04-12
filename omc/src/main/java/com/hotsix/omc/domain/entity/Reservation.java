@@ -4,7 +4,6 @@ package com.hotsix.omc.domain.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,5 +28,4 @@ public class Reservation {
     private String details;
     private String serviceStartHour;
     private String serviceEndHour;
-    private LocalDate serviceDate;
 }
