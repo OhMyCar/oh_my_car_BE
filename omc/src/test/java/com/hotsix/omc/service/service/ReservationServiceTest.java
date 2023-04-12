@@ -1,15 +1,16 @@
-package com.hotsix.omc.service;
+package com.hotsix.omc.service.service;
 
+import com.hotsix.omc.domain.dto.ReservationRequestDto;
+import com.hotsix.omc.domain.dto.ReservationResponseDto;
+import com.hotsix.omc.domain.dto.ReservationStoreResponseDto;
 import com.hotsix.omc.domain.entity.Customer;
 import com.hotsix.omc.domain.entity.Reservation;
 import com.hotsix.omc.domain.entity.ReservationStatus;
 import com.hotsix.omc.domain.entity.Store;
-import com.hotsix.omc.domain.dto.ReservationRequestDto;
-import com.hotsix.omc.domain.dto.ReservationResponseDto;
-import com.hotsix.omc.domain.dto.ReservationStoreResponseDto;
 import com.hotsix.omc.repository.CustomerRepository;
 import com.hotsix.omc.repository.ReservationRepository;
 import com.hotsix.omc.repository.StoreRepository;
+import com.hotsix.omc.service.ReservationService;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -17,6 +18,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -175,6 +177,7 @@ class ReservationServiceTest {
             // given
             Long customerId = 1L;
             LocalDateTime reservedAt = LocalDateTime.of(2023, 4, 10, 12, 0);
+            LocalDate serviceDate = LocalDate.of(2023, 4, 10);
 
             Customer customer = Customer.builder()
                     .id(customerId)
@@ -228,7 +231,7 @@ class ReservationServiceTest {
             when(reservationRepository.findReservationByCustomerAndReservedAtBetweenAndStatus(any(), any(), any(), any())).thenReturn(reservations);
 
             // when
-            List<ReservationStoreResponseDto> storeResponseDtos = reservationService.getReservation(customerId, reservedAt, null);
+            List<ReservationStoreResponseDto> storeResponseDtos = reservationService.getReservation(customerId, reservedAt, serviceDate,null);
 
             // then
             assertNotNull(storeResponseDtos);
@@ -261,12 +264,13 @@ class ReservationServiceTest {
             // given
             Long customerId = 1L;
             LocalDateTime reservedAt = LocalDateTime.of(2022, 4, 9, 12, 0);
+            LocalDate serviceDate = LocalDate.of(2023, 4, 12); 
             ReservationStatus status = ReservationStatus.REQUEST;
 
             when(customerRepository.findById(customerId)).thenReturn(Optional.empty());
 
             // when + then
-            assertThrows(ResponseStatusException.class, () -> reservationService.getReservation(customerId, reservedAt, status),
+            assertThrows(ResponseStatusException.class, () -> reservationService.getReservation(customerId, reservedAt, serviceDate, status),
                     "Invalid customer id");
         }
     }
