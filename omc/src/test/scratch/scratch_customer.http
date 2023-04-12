@@ -1,0 +1,23 @@
+
+### 회원가입 (고객)
+POST http://localhost:8080/customer/signup
+Content-Type: application/json
+
+{
+  "email" : "ceh201312@naver.com",
+  "name" : "최의현",
+  "password" : "aaaaaaaa!!",
+  "phone" : "010-0000-0000",
+  "nickname": "최의현"
+}
+
+### 리뷰작성 (고객)
+POST http://localhost:8080/customer/review
+Content-Type: application/json
+
+{
+  "email": "ceh201312@naver.com",
+  "zipcode": "00000",
+  "comment": "너무너무너무너무너무만족합니다",
+  "rating": 4.5
+}
