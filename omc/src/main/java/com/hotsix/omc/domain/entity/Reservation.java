@@ -4,6 +4,7 @@ package com.hotsix.omc.domain.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,6 +27,7 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
     private String details;
+    private LocalDate serviceDate;
     private String serviceStartHour;
     private String serviceEndHour;
 }
