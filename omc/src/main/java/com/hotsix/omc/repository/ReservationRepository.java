@@ -7,6 +7,7 @@ import com.hotsix.omc.domain.entity.Store;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,5 +21,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             ReservationStatus status
     );
 
-    List<Reservation> findReservationByStoreAndReservedAtBetweenAndStatusIn(Store store, LocalDateTime from, LocalDateTime to, ReservationStatus[] status);
+    List<Reservation> findReservationByStoreAndServiceDateBetweenAndStatusIn(Store store, LocalDate from, LocalDate to, ReservationStatus[] reservationStatuses);
 }

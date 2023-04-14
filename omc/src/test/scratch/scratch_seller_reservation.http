@@ -1,0 +1,28 @@
+### 업체 예약 확정
+PUT http://localhost:8080/store/1/confirm
+Content-Type: application/json
+
+
+### 업체 예약 취소
+PUT http://localhost:8080/store/1/cancel
+Content-Type: application/json
+
+
+### 업체 예약 조회
+GET http://localhost:8080/store/1/reservations
+Content-Type: application/json
+
+### 업체 예약 조회 - 기본값으로 조회
+GET http://localhost:8080/store/1/reservations?reservationStatus=CONFIRM
+
+### 업체 예약 조회 - 날짜별 조회
+GET http://localhost:8080/store/1/reservations?to=2023-03-31
+Content-Type: application/json
+
+### 업체 예약 조회 - 예약 현황별 조회
+GET http://localhost:8080/store/1/reservations?reservationStatus=CONFIRM&reservationStatus=CANCEL
+Content-Type: application/json
+
+### 업체 예약 조회 - 날짜/현황별 조회
+GET http://localhost:8080/store/1/reservations?to=2023-03-31&reservationStatus=FINISH
+Content-Type: application/json
