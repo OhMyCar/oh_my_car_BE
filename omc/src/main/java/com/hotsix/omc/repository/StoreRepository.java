@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface StoreRepository extends JpaRepository<Store, Long> {
     Optional<Store> findByIdAndSellerId(Long storeId, Long sellerId);
     List<Store> findBySellerId(Long sellerId);
+    Optional<Store> findByAddress_Zipcode(String zipcode);
 }

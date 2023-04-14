@@ -1,15 +1,25 @@
 package com.hotsix.omc.service;
 
+import static com.hotsix.omc.domain.entity.CustomerStatus.UNAUTHORIZED;
+import static com.hotsix.omc.exception.ErrorCode.ALREADY_EXIST_USER;
+import static com.hotsix.omc.exception.ErrorCode.BAD_REQUEST;
+import static com.hotsix.omc.exception.ErrorCode.EMAIL_NOT_EXIST;
+import static com.hotsix.omc.exception.ErrorCode.PASSWORD_NOT_MATCH;
+
 import com.hotsix.omc.components.MailComponents;
 import com.hotsix.omc.config.jwt.JwtTokenProvider;
 import com.hotsix.omc.domain.entity.Customer;
-import com.hotsix.omc.domain.form.customer.CustomerDeleteForm;
 import com.hotsix.omc.domain.form.customer.CustomerSignupForm;
 import com.hotsix.omc.domain.form.customer.CustomerSignupForm.Response;
+import com.hotsix.omc.domain.form.customer.CustomerUpdateForm;
 import com.hotsix.omc.domain.form.token.TokenInfo;
 import com.hotsix.omc.exception.UsersException;
 import com.hotsix.omc.repository.CustomerRepository;
 import com.hotsix.omc.repository.SellerRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -23,15 +33,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import static com.hotsix.omc.domain.entity.CustomerStatus.UNAUTHORIZED;
-import static com.hotsix.omc.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -119,11 +120,26 @@ public class CustomerService implements UserDetailsService {
                     customerGrantedAuthorities);
     }
 
-    public CustomerDeleteForm delete(Long id) {
+    public Customer delete(Long id) {
         Customer customer = customerRepository.findById(id)
             .orElseThrow(() -> new UsersException(EMAIL_NOT_EXIST));
 
         customerRepository.delete(customer);
-        return new CustomerDeleteForm(customer);
+        return customer;
     }
+
+    public CustomerUpdateForm.Response update(CustomerUpdateForm.Request request, Long id) {
+        Customer customer = customerRepository.findById(id)
+            .orElseThrow(() -> new UsersException(EMAIL_NOT_EXIST));
+
+        String encPw = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt());
+
+        customer.setPassword(encPw);
+        customer.setPhone(request.getPhone());
+        customerRepository.save(customer);
+
+        return CustomerUpdateForm.Response.from(customer);
+    }
+
+
 }
