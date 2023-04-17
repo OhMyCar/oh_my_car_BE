@@ -1,21 +1,19 @@
-package com.hotsix.omc.domain.form.customer;
+package com.hotsix.omc.domain.form.store;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class CustomerReviewForm {
+public class StoreReviewForm {
 	@Getter
 	@Builder
 	@AllArgsConstructor
 	@NoArgsConstructor
 	public static class Request {
-
 		private long customerId;
 		private long storeId;
-		private String comment;
-		private double rating;
+		private String reply;
 	}
 
 	@Getter
@@ -25,15 +23,13 @@ public class CustomerReviewForm {
 	public static class Response {
 		private long customerId;
 		private long storeId;
-		private String comment;
-		private double rating;
+		private String reply;
 
-		public static Response from(Request request) {
+		public static StoreReviewForm.Response from(StoreReviewForm.Request request) {
 			return Response.builder()
 				.customerId(request.customerId)
 				.storeId(request.storeId)
-				.comment(request.comment)
-				.rating(request.rating)
+				.reply(request.reply)
 				.build();
 		}
 	}

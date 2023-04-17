@@ -11,23 +11,27 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Review extends BaseEntity {
+public class Review extends BaseEntity{
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	private Long id;
 	@ManyToOne (fetch = FetchType.LAZY)
-	@JoinColumn (name = "CUSTOMER_ID")
+	@JoinColumn (name = "customerId")
 	private Customer customer;
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "STORE_ID")
+	@JoinColumn(name = "storeId")
 	private Store store;
 	private String name;
 	private String comment;
 	private double rating;
+	private String reply;
 }
+
