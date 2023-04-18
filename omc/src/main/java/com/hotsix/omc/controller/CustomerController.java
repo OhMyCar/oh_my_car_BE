@@ -64,7 +64,18 @@ public class CustomerController {
     }
 
     @PostMapping("/review")
-    public ResponseEntity<CustomerReviewForm.Response> review(@RequestBody CustomerReviewForm.Request request) {
-        return ResponseEntity.ok(reviewService.review(request));
+    public ResponseEntity<CustomerReviewForm.Response> addReview(@RequestBody CustomerReviewForm.Request request) throws Exception {
+        return ResponseEntity.ok(reviewService.addCustomerReview(request));
+    }
+
+    @PutMapping("/review/update/{reviewId}")
+    public ResponseEntity<CustomerReviewForm.Response> updateReview(@RequestBody CustomerReviewForm.Request request, @PathVariable Long reviewId) {
+        return ResponseEntity.ok(reviewService.updateCustomerReview(request, reviewId));
+    }
+
+    @DeleteMapping("/review/delete/{reviewId}")
+    public ResponseEntity<?> deleteReview(@PathVariable Long reviewId) {
+        reviewService.deleteReview(reviewId);
+        return ResponseEntity.noContent().build();
     }
 }
