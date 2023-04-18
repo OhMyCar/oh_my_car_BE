@@ -30,11 +30,11 @@ public class SellerReservationService {
         }
 
         if (reservation.getStatus() == ReservationStatus.CANCEL) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reservation has already been cancelled");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reservation has been cancelled");
         }
 
         if (reservation.getStatus() == ReservationStatus.FINISH) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reservation has already been finished");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reservation has been finished");
         }
 
 
@@ -56,6 +56,13 @@ public class SellerReservationService {
     public ReservationStoreResponseDto cancelReservation(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid reservation id"));
+        if (reservation.getStatus() == ReservationStatus.CANCEL) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reservation has been cancelled");
+        }
+
+        if (reservation.getStatus() == ReservationStatus.FINISH) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reservation has been finished");
+        }
 
         reservation.setStatus(ReservationStatus.CANCEL);
         reservationRepository.save(reservation);

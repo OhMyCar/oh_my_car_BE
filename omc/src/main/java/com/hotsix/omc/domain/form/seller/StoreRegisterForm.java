@@ -1,10 +1,7 @@
 package com.hotsix.omc.domain.form.seller;
 
 import com.hotsix.omc.domain.entity.Category;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -12,7 +9,7 @@ import javax.validation.constraints.Pattern;
 import java.util.List;
 
 public class StoreRegisterForm {
-    @Getter
+    @Data
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor

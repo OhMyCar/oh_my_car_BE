@@ -12,7 +12,8 @@ public enum ErrorCode {
     BAD_REQUEST("잘못된 요청입니다."),
     ALREADY_EXIST_USER("이미 존재하는 회원입니다."),
     SELLER_NOT_FOUND("셀러를 찾을 수 없습니다."),
-    STORE_NOT_FOUND("업체를 찾을 수 없습니다.");
+    STORE_NOT_FOUND("업체를 찾을 수 없습니다."),
+    ALREADY_EXIST_STORE("이미 존재하는 업체입니다.");
     private final String errorMessage;
 
 }
