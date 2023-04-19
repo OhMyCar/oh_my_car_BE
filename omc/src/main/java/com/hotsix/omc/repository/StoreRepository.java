@@ -1,5 +1,7 @@
 package com.hotsix.omc.repository;
 
+import com.hotsix.omc.domain.entity.Address;
+import com.hotsix.omc.domain.entity.Seller;
 import com.hotsix.omc.domain.entity.Store;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,4 +14,5 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     Optional<Store> findByIdAndSellerId(Long storeId, Long sellerId);
     List<Store> findBySellerId(Long sellerId);
     Optional<Store> findByAddress_Zipcode(String zipcode);
+    Optional<Store> findBySellerAndName(Seller seller, String name);
 }

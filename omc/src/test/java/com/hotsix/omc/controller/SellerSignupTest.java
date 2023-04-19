@@ -1,10 +1,8 @@
 package com.hotsix.omc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hotsix.omc.domain.form.customer.CustomerSignupForm;
 import com.hotsix.omc.domain.form.seller.SellerSignupForm;
-import com.hotsix.omc.service.CustomerService;
-import com.hotsix.omc.service.SellerServiceImpl;
+import com.hotsix.omc.service.SellerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -24,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(SellerController.class)
 public class SellerSignupTest {
     @MockBean
-    private SellerServiceImpl sellerService;
+    private SellerService sellerService;
 
     @Autowired
     private MockMvc mockMvc;

@@ -1,6 +1,5 @@
 package com.hotsix.omc.repository;
 
-import com.hotsix.omc.domain.entity.Customer;
 import com.hotsix.omc.domain.entity.Seller;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

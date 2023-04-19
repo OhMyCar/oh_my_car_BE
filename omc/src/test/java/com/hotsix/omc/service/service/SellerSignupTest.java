@@ -6,7 +6,7 @@ import com.hotsix.omc.domain.entity.Seller;
 import com.hotsix.omc.domain.form.seller.SellerSignupForm;
 import com.hotsix.omc.exception.UsersException;
 import com.hotsix.omc.repository.SellerRepository;
-import com.hotsix.omc.service.SellerServiceImpl;
+import com.hotsix.omc.service.SellerService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +35,7 @@ public class SellerSignupTest {
     private MailComponents mailComponents;
 
     @InjectMocks
-    private SellerServiceImpl sellerService;
+    private SellerService sellerService;
 
     @Test
     @DisplayName("셀러 - 회원가입 성공")
