@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 
@@ -35,12 +36,8 @@ public class StoreRegisterForm {
         @NotBlank(message = "가게 닫는 시간은 필수 입력 값입니다.")
         @Pattern(regexp = "^([01][0-9]|2[0-3]):[0-5][0-9]$", message = "올바른 시간 형식이 아닙니다")
         private String close;
-
-        private boolean category1;
-        private boolean category2;
-        private boolean category3;
-        private boolean category4;
-        private boolean category5;
+        @NotNull(message = "카테고리는 필수 입력 값입니다.")
+        private List<Category> categories;
     }
 
     @Getter
@@ -63,7 +60,7 @@ public class StoreRegisterForm {
                     .address(request.city + " " + request.street + " " + request.zipcode)
                     .open(request.open)
                     .close(request.close)
-                    .categories(Category.of(request))
+                    .categories(request.getCategories())
                     .build();
         }
     }
