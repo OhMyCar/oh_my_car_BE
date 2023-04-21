@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsUtils;
 
 @EnableWebSecurity
 @Configuration
@@ -44,15 +45,20 @@ public class SecurityConfig {
                         .antMatchers("/customer/**")
                                 .hasAnyRole("CUSTOMER")
                                         .antMatchers("/seller/**")
-                                                .hasAnyRole("SELLER");
+                                                .hasAnyRole("SELLER")
+                                                    .and()
+                                                        .authorizeRequests()
+                                                            .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .antMatchers("/customer/**", "/seller/**").permitAll()
+                .anyRequest().authenticated();
 //                .anyRequest().hasAnyRole("CUSTOMER", "SELLER");
 
 
         httpSecurity
-                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
+            .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+            .and()
+            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
 
         return httpSecurity.build();
     }
