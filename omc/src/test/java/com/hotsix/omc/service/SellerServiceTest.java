@@ -9,6 +9,8 @@ import com.hotsix.omc.domain.form.seller.StoreRegisterForm;
 import com.hotsix.omc.exception.UsersException;
 import com.hotsix.omc.repository.SellerRepository;
 import com.hotsix.omc.repository.StoreRepository;
+import org.json.simple.parser.ParseException;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -16,8 +18,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.persistence.EntityNotFoundException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.hotsix.omc.domain.form.seller.StoreRegisterForm.Response;
@@ -29,15 +35,15 @@ class SellerServiceTest {
 
     @Mock
     private SellerRepository sellerRepository;
-
     @Mock
     private StoreRepository storeRepository;
-
     @InjectMocks
     private SellerService sellerService;
-
+    @InjectMocks
+    private KakaoMapsService kakaoMapsService;
     private StoreRegisterForm.Request request;
-    private List<Category> category;
+    @Mock
+    private HttpURLConnection connection;
     private Seller seller;
     private Store store;
 
@@ -50,14 +56,10 @@ class SellerServiceTest {
         String close = "18:00";
         String name = "test";
         String tel = "010-1234-1234";
-        String city = "서울시";
-        String street = "강남대로";
+        String city = "서울특별시";
+        String street = "강남구 테헤란로 114";
         String zipcode = "00000";
-        boolean category1 = true;
-        boolean category2 = false;
-        boolean category3 = true;
-        boolean category4 = false;
-        boolean category5 = true;
+        List<Category> categories = List.of(new Category[]{Category.MAINTENANCE, Category.PAINT});
 
         request = StoreRegisterForm.Request.builder()
                 .email(email)
@@ -68,11 +70,7 @@ class SellerServiceTest {
                 .city(city)
                 .street(street)
                 .zipcode(zipcode)
-                .category1(category1)
-                .category2(category2)
-                .category3(category3)
-                .category4(category4)
-                .category5(category5)
+                .categories(categories)
                 .build();
         seller = Seller.builder()
                 .email(request.getEmail())
@@ -86,19 +84,20 @@ class SellerServiceTest {
                 .name(name)
                 .tel(tel)
                 .address(new Address(city, street, zipcode))
-                .categories(Category.of(request))
+                .categories(categories)
                 .build();
+            when(connection.getResponseCode()).thenReturn(200);
+            when(connection.getInputStream()).thenReturn(new ByteArrayInputStream("{\"documents\":[{\"address\":{\"x\":\"127.05629471248271\",\"y\":\"37.505675173512924\"}}]}".getBytes()));
+        }
 
-    }
 
     @Test
-    void registerStore() {
+    void registerStore() throws IOException, ParseException {
 
         when(sellerRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(seller));
         when(storeRepository.save(any(Store.class))).thenReturn(new Store());
 
         Response response = sellerService.registerStore(request);
-        category = Category.of(request);
 
         assertNotNull(response);
         assertEquals(response.getName(), request.getName());
@@ -106,7 +105,7 @@ class SellerServiceTest {
         assertEquals(response.getAddress(), request.getCity() + " " + request.getStreet() + " " + request.getZipcode());
         assertEquals(response.getOpen(), request.getOpen());
         assertEquals(response.getClose(), request.getClose());
-        assertEquals(response.getCategories(), category);
+        assertEquals(response.getCategories(), request.getCategories());
     }
 
     @Test
@@ -128,7 +127,7 @@ class SellerServiceTest {
 
 
     @Test
-    void updateStore() {
+    void updateStore() throws IOException, ParseException {
 
         when(sellerRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(seller));
         when(storeRepository.findByIdAndSellerId(store.getId(), seller.getId())).thenReturn(Optional.of(store));
@@ -139,7 +138,6 @@ class SellerServiceTest {
         request.setStreet("선릉로");
 
         Response response = sellerService.updateStore(request, store.getId());
-        category = Category.of(request);
 
         assertNotNull(response);
         assertEquals(response.getName(), request.getName());
@@ -147,7 +145,7 @@ class SellerServiceTest {
         assertEquals(response.getAddress(), request.getCity() + " " + request.getStreet() + " " + request.getZipcode());
         assertEquals(response.getOpen(), request.getOpen());
         assertEquals(response.getClose(), request.getClose());
-        assertEquals(response.getCategories(), category);
+        assertEquals(response.getCategories(), request.getCategories());
     }
 
     @Test
@@ -170,7 +168,7 @@ class SellerServiceTest {
                 .name("test2")
                 .tel("010-5678-5678")
                 .address(new Address("부산시", "해운대로", "11111"))
-                .categories(Category.of(request))
+                .categories(request.getCategories())
                 .build());
         when(sellerRepository.findById(seller.getId())).thenReturn(Optional.of(seller));
         when(storeRepository.findBySellerId(seller.getId())).thenReturn(stores);
@@ -204,6 +202,13 @@ class SellerServiceTest {
         sellerService.deleteStore(store.getId());
 
         verify(storeRepository, times(1)).delete(store);
+    }
+
+    @Test
+    public void testGetLatLnt() throws IOException, ParseException {
+        Map<String, Object> resultMap = kakaoMapsService.getLatLnt("서울특별시 강남구 역삼동 823-3");
+        Assert.assertEquals(resultMap.get("longitude").toString().substring(0,5), "127.0");
+        Assert.assertEquals(resultMap.get("latitude").toString().substring(0,4), "37.5");
     }
 
 }

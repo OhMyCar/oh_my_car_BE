@@ -13,9 +13,8 @@ import com.hotsix.omc.exception.ErrorCode;
 import com.hotsix.omc.exception.UsersException;
 import com.hotsix.omc.repository.SellerRepository;
 import com.hotsix.omc.repository.StoreRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.parser.ParseException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -30,10 +29,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.hotsix.omc.domain.entity.CustomerStatus.UNAUTHORIZED;
@@ -49,6 +46,7 @@ public class SellerService implements UserDetailsService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
+    private final KakaoMapsService kakaoMapsService;
 
 
 
@@ -125,7 +123,7 @@ public class SellerService implements UserDetailsService {
                 customerGrantedAuthorities);
     }
 
-    public Response registerStore(StoreRegisterForm.Request request) {
+    public Response registerStore(StoreRegisterForm.Request request) throws IOException, ParseException {
         Seller seller = sellerRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsersException(SELLER_NOT_FOUND));
 
@@ -135,8 +133,7 @@ public class SellerService implements UserDetailsService {
         }
 
         Address address = new Address(request.getCity(), request.getStreet(), request.getZipcode());
-
-        storeRepository.save(Store.builder()
+        Store store = Store.builder()
                 .seller(seller)
                 .open(request.getOpen())
                 .close(request.getClose())
@@ -144,27 +141,40 @@ public class SellerService implements UserDetailsService {
                 .tel(request.getTel())
                 .address(address)
                 .categories(request.getCategories())
-                .build());
+                .build();
+        saveStoreLocation(store, address);
+
+        storeRepository.save(store);
+
         return Response.from(request);
     }
 
-    public Response updateStore(StoreRegisterForm.Request request, Long storeId) {
+    public Response updateStore(StoreRegisterForm.Request request, Long storeId) throws IOException, ParseException {
         Seller seller = sellerRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsersException(ErrorCode.SELLER_NOT_FOUND));
         Store store = storeRepository.findByIdAndSellerId(storeId, seller.getId())
                 .orElseThrow(() -> new UsersException(ErrorCode.STORE_NOT_FOUND));
-        Address address = new Address(request.getCity(), request.getStreet(), request.getZipcode());
 
+        Address address = new Address(request.getCity(), request.getStreet(), request.getZipcode());
         store.setOpen(request.getOpen());
         store.setClose(request.getClose());
         store.setName(request.getName());
         store.setTel(request.getTel());
         store.setAddress(address);
         store.setCategories(request.getCategories());
+        saveStoreLocation(store, address);
 
         storeRepository.save(store);
 
         return Response.from(request);
+    }
+
+    public void saveStoreLocation(Store store, Address address) throws IOException, ParseException {
+        String fullAddress = address.getFullAddress(address);
+        Map<String, Object> geocodeData = kakaoMapsService.getLatLnt(fullAddress);
+
+        store.setLatitude((Double) geocodeData.get("latitude"));
+        store.setLongitude((Double) geocodeData.get("longitude"));
     }
 
     public List<StoreDto> getInfo(Long sellerId) {
