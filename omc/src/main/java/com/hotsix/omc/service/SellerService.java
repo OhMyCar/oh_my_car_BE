@@ -135,7 +135,6 @@ public class SellerService implements UserDetailsService {
         }
 
         Address address = new Address(request.getCity(), request.getStreet(), request.getZipcode());
-        List<Category> category = Category.of(request);
 
         storeRepository.save(Store.builder()
                 .seller(seller)
@@ -144,7 +143,7 @@ public class SellerService implements UserDetailsService {
                 .name(request.getName())
                 .tel(request.getTel())
                 .address(address)
-                .categories(category)
+                .categories(request.getCategories())
                 .build());
         return Response.from(request);
     }
@@ -155,14 +154,13 @@ public class SellerService implements UserDetailsService {
         Store store = storeRepository.findByIdAndSellerId(storeId, seller.getId())
                 .orElseThrow(() -> new UsersException(ErrorCode.STORE_NOT_FOUND));
         Address address = new Address(request.getCity(), request.getStreet(), request.getZipcode());
-        List<Category> category = Category.of(request);
 
         store.setOpen(request.getOpen());
         store.setClose(request.getClose());
         store.setName(request.getName());
         store.setTel(request.getTel());
         store.setAddress(address);
-        store.setCategories(category);
+        store.setCategories(request.getCategories());
 
         storeRepository.save(store);
 
