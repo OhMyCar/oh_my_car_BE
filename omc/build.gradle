@@ -51,6 +51,9 @@ dependencies {
     implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
     implementation 'javax.servlet:jstl'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    // 봉찬
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.7.2'
 }
 
 tasks.named('test') {
