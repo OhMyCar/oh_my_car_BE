@@ -7,9 +7,12 @@ import com.hotsix.omc.domain.form.seller.StoreRegisterForm;
 import com.hotsix.omc.domain.form.store.StoreReviewForm;
 import com.hotsix.omc.service.ReviewService;
 import com.hotsix.omc.service.SellerService;
+
+import java.io.IOException;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.parser.ParseException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,12 +32,12 @@ public class StoreController {
     private final ReviewService reviewService;
 
     @PostMapping
-    public ResponseEntity<StoreRegisterForm.Response> registerStore(@RequestBody @Valid StoreRegisterForm.Request request) {
+    public ResponseEntity<StoreRegisterForm.Response> registerStore(@RequestBody @Valid StoreRegisterForm.Request request) throws IOException, ParseException {
         return ResponseEntity.ok(sellerService.registerStore(request));
     }
 
     @PutMapping("/update/{storeId}")
-    public ResponseEntity<StoreRegisterForm.Response> updateStore(@RequestBody @Valid StoreRegisterForm.Request request, @PathVariable("storeId") Long storeId) {
+    public ResponseEntity<StoreRegisterForm.Response> updateStore(@RequestBody @Valid StoreRegisterForm.Request request, @PathVariable("storeId") Long storeId) throws IOException, ParseException {
         return ResponseEntity.ok(sellerService.updateStore(request, storeId));
     }
 
