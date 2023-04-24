@@ -8,14 +8,14 @@ Content-Type: application/json
   "close" :"18:00",
   "name" : "test",
   "tel" : "02-000-0000",
-  "city" : "서울",
-  "street" : "강남대로",
+  "city" : "서울시",
+  "street" : "강남구 테헤란로 114",
   "zipcode" : "00000",
-  "category1" : true,
-  "category2" : false,
-  "category3" : true,
-  "category4" : false,
-  "category5" : true
+  "categories": [
+    "MAINTENANCE",
+    "PAINT",
+    "TUNING"
+  ]
 
 }
 
@@ -29,14 +29,14 @@ Content-Type: application/json
   "close" :"17:00",
   "name" : "test",
   "tel" : "02-000-0000",
-  "city" : "서울",
-  "street" : "강남대로",
+  "city" : "서울시",
+  "street" : "강남구 테헤란로 114",
   "zipcode" : "00000",
-  "category1" : true,
-  "category2" : false,
-  "category3" : true,
-  "category4" : false,
-  "category5" : true
+  "categories": [
+    "MAINTENANCE",
+    "PAINT",
+    "TUNING"
+  ]
 
 }
 

@@ -33,5 +33,6 @@ public class Store extends BaseEntity {
     @ElementCollection
     @Enumerated(EnumType.STRING)
     private List<Category> categories;
-
+    private Double latitude;
+    private Double longitude;
 }

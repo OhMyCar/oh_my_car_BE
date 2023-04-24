@@ -1,9 +1,11 @@
 package com.hotsix.omc.controller;
 
 import com.hotsix.omc.service.KakaoLoginService;
+import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,7 +15,7 @@ public class KakaoLoginController {
 
 	private final KakaoLoginService kakaoLoginService;
 
-	@GetMapping("/login/{token}")
+	@GetMapping ("/login/{token}")
 	public void login(@PathVariable String token) {
 		kakaoLoginService.loginWithAccessToken(token);
 	}
@@ -23,4 +25,17 @@ public class KakaoLoginController {
 		return kakaoLoginService.getAccessToken(code);
 	}
 
+	@PostMapping(value="/kakaologout")
+	public String logout(HttpSession session) {
+		kakaoLoginService.logout((String)session.getAttribute("access_token"));
+		session.invalidate();
+		return "redirect:/";
+	}
+
+	@PostMapping(value="/kakaounlink")
+	public String unlink(HttpSession session) {
+		kakaoLoginService.unlink((String)session.getAttribute("access_token"));
+		session.invalidate();
+		return "redirect:/";
+	}
 }

@@ -15,7 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -74,7 +73,7 @@ class SellerReservationServiceTest {
 
         assertThrows(ResponseStatusException.class, () -> {
             sellerReservationService.confirmReservation(reservationId);
-        }, "Reservation has already been cancelled");
+        }, "Reservation has been cancelled");
     }
 
     @Test
@@ -87,7 +86,7 @@ class SellerReservationServiceTest {
 
         assertThrows(ResponseStatusException.class, () -> {
             sellerReservationService.confirmReservation(reservationId);
-        }, "Reservation has already been finished");
+        }, "Reservation has been finished");
     }
 
     @Test
@@ -195,7 +194,7 @@ class SellerReservationServiceTest {
         when(storeRepository.findById(store.getId())).thenReturn(Optional.of(store));
         when(reservationRepository.findReservationByStoreAndServiceDateBetweenAndStatusIn(eq(store), any(LocalDate.class), any(LocalDate.class), eq(reservationStatus))).thenReturn(Collections.singletonList(reservation2));
 
-        List<ReservationStoreResponseDto> storeResponseDtoList = sellerReservationService.getStoreReservations(store.getId(), LocalDate.of(2023, 4, 14),  reservationStatus);
+        List<ReservationStoreResponseDto> storeResponseDtoList = sellerReservationService.getStoreReservations(store.getId(), LocalDate.of(2023, 4, 14), reservationStatus);
 
         assertNotNull(storeResponseDtoList);
         assertEquals(storeResponseDtoList.size(), 1);

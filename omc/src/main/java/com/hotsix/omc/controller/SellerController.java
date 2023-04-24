@@ -1,12 +1,9 @@
 package com.hotsix.omc.controller;
 
-import com.hotsix.omc.domain.form.customer.CustomerLoginForm;
-import com.hotsix.omc.domain.form.customer.CustomerSignupForm;
 import com.hotsix.omc.domain.form.seller.SellerLoginForm;
 import com.hotsix.omc.domain.form.seller.SellerSignupForm;
 import com.hotsix.omc.domain.form.token.TokenInfo;
 import com.hotsix.omc.service.SellerService;
-import com.hotsix.omc.service.SellerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +17,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @Slf4j
 public class SellerController {
-    private final SellerServiceImpl sellerService;
+    private final SellerService sellerService;
     @PostMapping("/signup")
     public ResponseEntity<SellerSignupForm.Response> registerMember(
             @RequestBody @Valid SellerSignupForm.Request request) {
