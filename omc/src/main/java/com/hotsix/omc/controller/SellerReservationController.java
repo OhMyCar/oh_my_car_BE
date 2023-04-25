@@ -41,6 +41,12 @@ public class SellerReservationController {
 
     }
 
+    @PutMapping("/{reserveId}/finish")
+    public ResponseEntity<ReservationStoreResponseDto> finishReservation(@PathVariable Long reserveId) {
+        ReservationStoreResponseDto reservationStoreResponseDto = sellerReservationService.finishReservation(reserveId);
+        return ResponseEntity.ok(reservationStoreResponseDto);
+    }
+
 
 
 }

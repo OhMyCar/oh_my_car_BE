@@ -85,7 +85,6 @@ public class SellerReservationService {
 
         LocalDate from = to.minusYears(1);
 
-//        List<Reservation> reservations = reservationRepository.findReservationByStoreAndServiceDateBetween(store, from, to);
         List<Reservation> reservations = reservationRepository.findReservationByStoreAndServiceDateBetweenAndStatusIn(store, from, to, reservationStatus);
         List<ReservationStoreResponseDto> storeResponseDtoList = new ArrayList<>();
         for (Reservation reservation : reservations) {
@@ -102,5 +101,35 @@ public class SellerReservationService {
             storeResponseDtoList.add(storeResponseDto);
         }
         return storeResponseDtoList;
+    }
+
+    public ReservationStoreResponseDto finishReservation(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid reservation id"));
+        if (reservation.getStatus() == ReservationStatus.CANCEL) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reservation has been cancelled");
+        }
+
+        if (reservation.getStatus() == ReservationStatus.FINISH) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reservation has been finished");
+        }
+
+        if (reservation.getStatus() == ReservationStatus.REQUEST) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reservation has not been confirmed");
+        }
+
+        reservation.setStatus(ReservationStatus.FINISH);
+        reservationRepository.save(reservation);
+
+        return ReservationStoreResponseDto.builder()
+                .customerId(reservation.getCustomer().getId())
+                .storeId(reservation.getStore().getId())
+                .name(reservation.getStore().getName())
+                .status(reservation.getStatus())
+                .reservedAt(reservation.getReservedAt())
+                .serviceDate(reservation.getServiceDate())
+                .serviceStartHour(reservation.getServiceStartHour())
+                .serviceEndHour(reservation.getServiceEndHour())
+                .build();
     }
 }
