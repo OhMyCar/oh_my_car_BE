@@ -14,7 +14,6 @@ import com.hotsix.omc.exception.UsersException;
 import com.hotsix.omc.repository.SellerRepository;
 import com.hotsix.omc.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.parser.ParseException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -29,7 +28,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -123,7 +121,7 @@ public class SellerService implements UserDetailsService {
                 customerGrantedAuthorities);
     }
 
-    public Response registerStore(StoreRegisterForm.Request request) throws IOException, ParseException {
+    public Response registerStore(StoreRegisterForm.Request request) {
         Seller seller = sellerRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsersException(SELLER_NOT_FOUND));
 
@@ -149,7 +147,7 @@ public class SellerService implements UserDetailsService {
         return Response.from(request);
     }
 
-    public Response updateStore(StoreRegisterForm.Request request, Long storeId) throws IOException, ParseException {
+    public Response updateStore(StoreRegisterForm.Request request, Long storeId) {
         Seller seller = sellerRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsersException(ErrorCode.SELLER_NOT_FOUND));
         Store store = storeRepository.findByIdAndSellerId(storeId, seller.getId())
@@ -169,12 +167,14 @@ public class SellerService implements UserDetailsService {
         return Response.from(request);
     }
 
-    public void saveStoreLocation(Store store, Address address) throws IOException, ParseException {
+    public void saveStoreLocation(Store store, Address address) {
         String fullAddress = address.getFullAddress(address);
-        Map<String, Object> geocodeData = kakaoMapsService.getLatLnt(fullAddress);
+        String geoJsonString = kakaoMapsService.getGeoJson(fullAddress);
+        Map<String, Object> geocodeData = kakaoMapsService.parseGeocode(geoJsonString);
 
         store.setLatitude((Double) geocodeData.get("latitude"));
         store.setLongitude((Double) geocodeData.get("longitude"));
+
     }
 
     public List<StoreDto> getInfo(Long sellerId) {

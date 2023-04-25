@@ -9,22 +9,13 @@ import com.hotsix.omc.domain.form.seller.StoreRegisterForm;
 import com.hotsix.omc.exception.UsersException;
 import com.hotsix.omc.repository.SellerRepository;
 import com.hotsix.omc.repository.StoreRepository;
-import org.json.simple.parser.ParseException;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import javax.persistence.EntityNotFoundException;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.hotsix.omc.domain.form.seller.StoreRegisterForm.Response;
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,18 +28,16 @@ class SellerServiceTest {
     private SellerRepository sellerRepository;
     @Mock
     private StoreRepository storeRepository;
+    @Mock
+    private KakaoMapsService kakaoMapsService;
     @InjectMocks
     private SellerService sellerService;
-    @InjectMocks
-    private KakaoMapsService kakaoMapsService;
     private StoreRegisterForm.Request request;
-    @Mock
-    private HttpURLConnection connection;
     private Seller seller;
     private Store store;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
 
         String email = "test@test.com";
@@ -86,16 +75,21 @@ class SellerServiceTest {
                 .address(new Address(city, street, zipcode))
                 .categories(categories)
                 .build();
-            when(connection.getResponseCode()).thenReturn(200);
-            when(connection.getInputStream()).thenReturn(new ByteArrayInputStream("{\"documents\":[{\"address\":{\"x\":\"127.05629471248271\",\"y\":\"37.505675173512924\"}}]}".getBytes()));
-        }
+    }
 
 
     @Test
-    void registerStore() throws IOException, ParseException {
+    void registerStore() {
 
         when(sellerRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(seller));
         when(storeRepository.save(any(Store.class))).thenReturn(new Store());
+        String geoJsonString = "{}";
+        Map<String, Object> geocodeData = new HashMap<>();
+        geocodeData.put("latitude", 37.49);
+        geocodeData.put("longitude", 127.03);
+        when(kakaoMapsService.getGeoJson(any())).thenReturn(geoJsonString);
+        when(kakaoMapsService.parseGeocode(any())).thenReturn(geocodeData);
+
 
         Response response = sellerService.registerStore(request);
 
@@ -127,7 +121,7 @@ class SellerServiceTest {
 
 
     @Test
-    void updateStore() throws IOException, ParseException {
+    void updateStore() {
 
         when(sellerRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(seller));
         when(storeRepository.findByIdAndSellerId(store.getId(), seller.getId())).thenReturn(Optional.of(store));
@@ -135,7 +129,7 @@ class SellerServiceTest {
         request.setClose("15:00");
         request.setName("test2");
         request.setTel("010-5678-5678");
-        request.setStreet("선릉로");
+        request.setStreet("강남구 선릉로 120");
 
         Response response = sellerService.updateStore(request, store.getId());
 
@@ -167,7 +161,7 @@ class SellerServiceTest {
                 .close("17:00")
                 .name("test2")
                 .tel("010-5678-5678")
-                .address(new Address("부산시", "해운대로", "11111"))
+                .address(new Address("부산시", "해운대구 해운대로76번길 55", "11111"))
                 .categories(request.getCategories())
                 .build());
         when(sellerRepository.findById(seller.getId())).thenReturn(Optional.of(seller));
@@ -204,11 +198,5 @@ class SellerServiceTest {
         verify(storeRepository, times(1)).delete(store);
     }
 
-    @Test
-    public void testGetLatLnt() throws IOException, ParseException {
-        Map<String, Object> resultMap = kakaoMapsService.getLatLnt("서울특별시 강남구 역삼동 823-3");
-        Assert.assertEquals(resultMap.get("longitude").toString().substring(0,5), "127.0");
-        Assert.assertEquals(resultMap.get("latitude").toString().substring(0,4), "37.5");
-    }
 
 }
