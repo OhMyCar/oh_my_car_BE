@@ -9,6 +9,7 @@ import com.hotsix.omc.repository.ReservationRepository;
 import com.hotsix.omc.repository.StoreRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,6 +27,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 class SellerReservationServiceTest {
+    @InjectMocks
     private SellerReservationService sellerReservationService;
 
     @Mock
@@ -33,11 +35,31 @@ class SellerReservationServiceTest {
 
     @Mock
     private StoreRepository storeRepository;
+    private Reservation reservation;
+    private Customer customer;
+    private Store store;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         sellerReservationService = new SellerReservationService(reservationRepository, storeRepository);
+        store = Store.builder()
+                .id(1L)
+                .name("Test Store")
+                .build();
+        customer = Customer.builder()
+                .id(1L)
+                .build();
+        reservation = Reservation.builder()
+                .id(1L)
+                .status(ReservationStatus.REQUEST)
+                .store(store)
+                .customer(customer)
+                .reservedAt(LocalDateTime.now())
+                .serviceDate(LocalDate.of(2023, 4, 14))
+                .serviceStartHour("10")
+                .serviceEndHour("11")
+                .build();
     }
 
     @Test
@@ -54,7 +76,7 @@ class SellerReservationServiceTest {
     public void alreadyConfirmedReservation() {
         Long reservationId = 1L;
         Reservation confirmedReservation = new Reservation();
-        confirmedReservation.setId(reservationId);
+        confirmedReservation.setId(1L);
         confirmedReservation.setStatus(ReservationStatus.CONFIRM);
         when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(confirmedReservation));
 
@@ -91,20 +113,6 @@ class SellerReservationServiceTest {
 
     @Test
     public void confirmReservation() {
-        Reservation reservation = new Reservation();
-        reservation.setId(1L);
-        reservation.setStatus(ReservationStatus.REQUEST);
-        Customer customer = new Customer();
-        customer.setId(1L);
-        reservation.setCustomer(customer);
-        Store store = new Store();
-        store.setId(1L);
-        store.setName("Test Store");
-        reservation.setStore(store);
-        reservation.setReservedAt(LocalDateTime.now());
-        reservation.setServiceDate(LocalDate.of(2023, 4, 14));
-        reservation.setServiceStartHour("10");
-        reservation.setServiceEndHour("11");
         when(reservationRepository.findById(reservation.getId())).thenReturn(Optional.of(reservation));
 
 
@@ -124,21 +132,6 @@ class SellerReservationServiceTest {
 
     @Test
     void cancelReservation() {
-
-        Reservation reservation = new Reservation();
-        reservation.setId(1L);
-        reservation.setStatus(ReservationStatus.CONFIRM);
-        Customer customer = new Customer();
-        customer.setId(1L);
-        reservation.setCustomer(customer);
-        Store store = new Store();
-        store.setId(1L);
-        store.setName("Test Store");
-        reservation.setStore(store);
-        reservation.setReservedAt(LocalDateTime.now());
-        reservation.setServiceDate(LocalDate.of(2023, 4, 14));
-        reservation.setServiceStartHour("10");
-        reservation.setServiceEndHour("11");
         when(reservationRepository.findById(reservation.getId())).thenReturn(Optional.of(reservation));
 
 
@@ -159,21 +152,6 @@ class SellerReservationServiceTest {
     @Test
     void getStoreReservations() {
 
-        Reservation reservation1 = new Reservation();
-        reservation1.setId(1L);
-        reservation1.setStatus(ReservationStatus.REQUEST);
-        Customer customer = new Customer();
-        customer.setId(1L);
-        reservation1.setCustomer(customer);
-        Store store = new Store();
-        store.setId(1L);
-        store.setName("Test Store");
-        reservation1.setStore(store);
-        reservation1.setReservedAt(LocalDateTime.now());
-        reservation1.setServiceDate(LocalDate.of(2023, 4, 10));
-        reservation1.setServiceStartHour("10");
-        reservation1.setServiceEndHour("11");
-
         Reservation reservation2 = new Reservation();
         reservation2.setId(2L);
         reservation2.setStatus(ReservationStatus.CONFIRM);
@@ -187,7 +165,7 @@ class SellerReservationServiceTest {
         reservation2.setServiceEndHour("11");
 
         List<Reservation> reservations = new ArrayList<>();
-        reservations.add(reservation1);
+        reservations.add(reservation);
         reservations.add(reservation2);
         ReservationStatus[] reservationStatus = new ReservationStatus[]{ReservationStatus.CONFIRM};
 
@@ -209,5 +187,24 @@ class SellerReservationServiceTest {
         assertEquals(reservation2.getServiceStartHour(), responseDto.getServiceStartHour());
         assertEquals(reservation2.getServiceEndHour(), responseDto.getServiceEndHour());
 
+    }
+
+    @Test
+    void finishReservation() {
+        reservation.setStatus(ReservationStatus.CONFIRM);
+        when(reservationRepository.findById(reservation.getId())).thenReturn(Optional.of(reservation));
+
+
+        ReservationStoreResponseDto responseDto = sellerReservationService.finishReservation(reservation.getId());
+
+
+        assertEquals(reservation.getCustomer().getId(), responseDto.getCustomerId());
+        assertEquals(reservation.getStore().getId(), responseDto.getStoreId());
+        assertEquals(reservation.getStore().getName(), responseDto.getName());
+        assertEquals(ReservationStatus.FINISH, responseDto.getStatus());
+        assertEquals(reservation.getReservedAt(), responseDto.getReservedAt());
+        assertEquals(reservation.getServiceDate(), responseDto.getServiceDate());
+        assertEquals(reservation.getServiceStartHour(), responseDto.getServiceStartHour());
+        assertEquals(reservation.getServiceEndHour(), responseDto.getServiceEndHour());
     }
 }
