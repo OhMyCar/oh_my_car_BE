@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -22,30 +21,47 @@ import java.util.Map;
 public class KakaoMapsService {
 
     @Value("${apikey.kakao.rest.api.key}")
-    private String apiKey;
+    private final String apiKey;
 
-
-    public Map<String, Object> getLatLnt(String fullAddress) throws IOException, ParseException {
+    public String getGeoJson(String fullAddress) {
         String apiURL = "https://dapi.kakao.com/v2/local/search/address.json?query=";
-        String query = "서울특별시 강남구 역삼동 823-3";
 
-        URL url = new URL(apiURL + URLEncoder.encode(query, "UTF-8"));
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Authorization", "KakaoAK " + apiKey);
+        try {
+            URL url = new URL(apiURL + URLEncoder.encode(fullAddress, "UTF-8"));
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Authorization", "KakaoAK " + apiKey);
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-        String inputLine;
-        StringBuffer response = new StringBuffer();
+            int responseCode = conn.getResponseCode();
+            BufferedReader br;
+            if (responseCode == 200) {
+                br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            } else {
+                br = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+            }
+            String inputLine;
+            StringBuffer response = new StringBuffer();
 
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
+            while ((inputLine = br.readLine()) != null) {
+                response.append(inputLine);
+            }
+            br.close();
+            return response.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to retrieve geocode string for address: " + fullAddress, e);
         }
-        in.close();
+    }
+
+    public Map<String, Object> parseGeocode(String jsonString) {
+
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject;
 
-        jsonObject = (JSONObject) jsonParser.parse(response.toString());
+        try {
+            jsonObject = (JSONObject) jsonParser.parse(jsonString);
+        } catch (ParseException e) {
+            throw new RuntimeException("Failed to parse geocode JSON string: " + jsonString, e);
+        }
         JSONArray documents = (JSONArray) jsonObject.get("documents");
         JSONObject document = (JSONObject) documents.get(0);
         JSONObject address = (JSONObject) document.get("address");
@@ -57,5 +73,8 @@ public class KakaoMapsService {
         return resultMap;
 
     }
+
 }
+
+
 
