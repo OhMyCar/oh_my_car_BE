@@ -36,7 +36,6 @@ public class FcmConfig {
             if (FirebaseApp.getApps().isEmpty()) {
 
                 FirebaseApp.initializeApp(options);
-                log.info("Firebase application init");
             }
         }catch (IOException e){
             log.error(e.getMessage());

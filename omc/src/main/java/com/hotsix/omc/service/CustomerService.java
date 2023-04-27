@@ -1,6 +1,6 @@
 package com.hotsix.omc.service;
 
-import static com.hotsix.omc.domain.entity.CustomerStatus.UNAUTHORIZED;
+import static com.hotsix.omc.domain.entity.type.CustomerStatus.UNAUTHORIZED;
 import static com.hotsix.omc.exception.ErrorCode.ALREADY_EXIST_USER;
 import static com.hotsix.omc.exception.ErrorCode.BAD_REQUEST;
 import static com.hotsix.omc.exception.ErrorCode.EMAIL_NOT_EXIST;

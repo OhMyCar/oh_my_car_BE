@@ -25,6 +25,8 @@ public enum ErrorCode {
     CAN_NOT_FOUND_TOKEN("token not found."),
     NOT_FOUNT_NOTIFICATION("not found notification."),
     NOTIFICATION_RECEIVER_NOT_MATCH("notification receiver doesn't match."),
+    NOTIFICATION_PERMIT_INFO_NOT_EXIST("notification permission doesn't exist."),
+    USER_NOT_EXIST("고객을 찾을 수 없습니다."),
     UNMATCH_NOTIFICATION_RECEIVER("unmatch notification receiver.");
 
 
