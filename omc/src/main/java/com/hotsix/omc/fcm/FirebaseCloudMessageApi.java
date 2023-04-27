@@ -3,6 +3,7 @@ package com.hotsix.omc.fcm;
 
 import com.google.firebase.messaging.*;
 import com.hotsix.omc.domain.dto.NotificationDto;
+import com.hotsix.omc.domain.entity.Notification;
 import com.hotsix.omc.exception.OmcException;
 import com.hotsix.omc.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,7 @@ public class FirebaseCloudMessageApi {
                 log.info(response);
 
                 notificationRepository.save(
-                        Notification.of(notificationId, dto));
+                        Notification.from(notificationId, dto));
             } catch (FirebaseMessagingException e){
                 throw new OmcException(FAILED_SEND_MESSAGE);
             }
