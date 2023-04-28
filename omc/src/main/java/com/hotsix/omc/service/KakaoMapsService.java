@@ -52,7 +52,7 @@ public class KakaoMapsService {
         }
     }
 
-    public Map<String, Object> parseGeocode(String jsonString) {
+    public Map<String, Double> parseGeocode(String jsonString) {
 
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject;
@@ -66,10 +66,11 @@ public class KakaoMapsService {
         JSONObject document = (JSONObject) documents.get(0);
         JSONObject address = (JSONObject) document.get("address");
 
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("longitude", address.get("x"));
-        resultMap.put("latitude", address.get("y"));
-
+        Map<String, Double> resultMap = new HashMap<>();
+//        resultMap.put("longitude", address.get("x"));
+//        resultMap.put("latitude", address.get("y"));
+        resultMap.put("longitude", Double.parseDouble(address.get("x").toString()));
+        resultMap.put("latitude", Double.parseDouble(address.get("y").toString()));
         return resultMap;
 
     }
