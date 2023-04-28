@@ -21,7 +21,7 @@ import java.util.Map;
 public class KakaoMapsService {
 
     @Value("${apikey.kakao.rest.api.key}")
-    private final String apiKey;
+    private String apiKey;
 
     public String getGeoJson(String fullAddress) {
         String apiURL = "https://dapi.kakao.com/v2/local/search/address.json?query=";

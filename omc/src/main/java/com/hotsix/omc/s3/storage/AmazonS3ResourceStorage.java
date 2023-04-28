@@ -3,7 +3,6 @@ package com.hotsix.omc.s3.storage;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.hotsix.omc.s3.util.MultipartUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -19,7 +18,7 @@ public class AmazonS3ResourceStorage {
     private final AmazonS3Client amazonS3Client;
 
     public void store(String fullPath, MultipartFile multipartFile) {
-        File file = new File(MultipartUtil.getLocalHomeDirectory(), fullPath);
+        File file = new File(com.hotsix.omc.util.MultipartUtil.getLocalHomeDirectory(), fullPath);
         try {
             multipartFile.transferTo(file);
             amazonS3Client.putObject(new PutObjectRequest(bucket, fullPath, file)

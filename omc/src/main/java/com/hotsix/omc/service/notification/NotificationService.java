@@ -59,7 +59,7 @@ public class NotificationService {
     // 개별 알람 삭제
     @Transactional
     public String deleteNotification(String notificationId, Customer customer) {
-        if (!notificationRepository.findByNotificationId(notificationId).isPresent()) {
+        if (notificationRepository.findByNotificationId(notificationId).isEmpty()) {
             throw new OmcException(NOTIFICATION_NOT_FOUND);
         }
         Notification notification =

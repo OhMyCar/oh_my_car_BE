@@ -26,7 +26,7 @@ public class Notification extends BaseEntity {
     private Long id;
 
     @ManyToOne
-    private Customer receiver;
+    private Customer customer;
     @Column(unique = true)
     private String notificationId;
     @Enumerated(EnumType.STRING)
@@ -39,7 +39,7 @@ public class Notification extends BaseEntity {
 
     public static Notification from(String notificationId, NotificationDto dto){
         return Notification.builder()
-                .receiver(dto.getCustomer())
+                .customer(dto.getCustomer())
                 .notificationId(notificationId)
                 .notificationType(dto.getNotificationType())
                 .notificationDetails(dto.getNotificationDetails())

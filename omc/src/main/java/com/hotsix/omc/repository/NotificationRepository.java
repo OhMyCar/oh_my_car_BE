@@ -11,9 +11,9 @@ import java.util.Optional;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
     List<Notification> findAllByCustomerId(Long customerId);
-    List<Notification> findAllByCustomerIdAndNotificationStatus_Unread(Long customerId, NotificationStatus status);
+//    List<Notification> findAllByCustomerIdAndNotificationStatus_Unread(Long customerId, NotificationStatus status);
     Optional<Notification> findByNotificationId(String notificationId);
-    void deleteById(Long notificationId);
+    void deleteById(Long id);
     void deleteAllByCustomerId(Long customerId);
 
 }

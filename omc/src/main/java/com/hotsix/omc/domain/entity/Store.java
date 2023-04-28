@@ -1,6 +1,8 @@
 package com.hotsix.omc.domain.entity;
 
 
+import com.hotsix.omc.domain.entity.type.Address;
+import com.hotsix.omc.domain.entity.type.Category;
 import lombok.*;
 
 import javax.persistence.*;

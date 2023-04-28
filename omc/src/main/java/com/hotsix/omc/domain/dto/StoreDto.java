@@ -1,8 +1,9 @@
 package com.hotsix.omc.domain.dto;
 
-import com.hotsix.omc.domain.entity.Address;
-import com.hotsix.omc.domain.entity.Category;
+
 import com.hotsix.omc.domain.entity.Store;
+import com.hotsix.omc.domain.entity.type.Address;
+import com.hotsix.omc.domain.entity.type.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

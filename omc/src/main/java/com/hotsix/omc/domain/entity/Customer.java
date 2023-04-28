@@ -33,6 +33,10 @@ public class Customer extends BaseEntity {
 
     @OneToMany(mappedBy = "customer")
     private List<Car> cars = new ArrayList<>();
+    @OneToOne
+    private NotificationPermit notificationPermit;
+    @OneToMany(mappedBy = "customer")
+    private List<Notification> notification;
     @OneToMany List<Reservation> reservations = new ArrayList<>();
     @Enumerated(EnumType.STRING)
     private CustomerStatus Auth;
