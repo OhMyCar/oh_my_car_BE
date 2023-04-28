@@ -67,8 +67,6 @@ public class KakaoMapsService {
         JSONObject address = (JSONObject) document.get("address");
 
         Map<String, Double> resultMap = new HashMap<>();
-//        resultMap.put("longitude", address.get("x"));
-//        resultMap.put("latitude", address.get("y"));
         resultMap.put("longitude", Double.parseDouble(address.get("x").toString()));
         resultMap.put("latitude", Double.parseDouble(address.get("y").toString()));
         return resultMap;
