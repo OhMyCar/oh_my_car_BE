@@ -1,4 +1,4 @@
-package com.hotsix.omc.domain.entity;
+package com.hotsix.omc.domain.entity.type;
 
 import com.hotsix.omc.domain.form.seller.StoreRegisterForm;
 

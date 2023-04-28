@@ -1,4 +1,4 @@
-package com.hotsix.omc.notification.type;
+package com.hotsix.omc.domain.entity.type;
 
 
 import lombok.AllArgsConstructor;

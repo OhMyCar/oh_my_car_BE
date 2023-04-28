@@ -18,6 +18,7 @@ public class CustomerUpdateForm {
 		private String password;
 		@NotBlank(message = "휴대폰 번호를 입력해 주세요.")
 		private String phone;
+
 	}
 
 	@Getter

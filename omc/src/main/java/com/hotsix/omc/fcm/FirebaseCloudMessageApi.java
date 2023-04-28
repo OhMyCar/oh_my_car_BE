@@ -2,10 +2,10 @@ package com.hotsix.omc.fcm;
 
 
 import com.google.firebase.messaging.*;
+import com.hotsix.omc.domain.dto.NotificationDto;
+import com.hotsix.omc.domain.entity.Notification;
 import com.hotsix.omc.exception.OmcException;
-import com.hotsix.omc.notification.domain.Notification;
-import com.hotsix.omc.notification.dto.NotificationDto;
-import com.hotsix.omc.notification.repository.NotificationRepository;
+import com.hotsix.omc.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,7 @@ public class FirebaseCloudMessageApi {
 
             String notificationId = UUID.randomUUID().toString()
                     .replaceAll(REPLACE_HYPHEN, "")
-                    .concat(now);
+                    .concat(now); //notificationId 와 현재 시간 now 를 연결해줌. ex) fni23nofnirnoin2in202304251411
 
 
             // 메세지 작성
@@ -48,10 +48,8 @@ public class FirebaseCloudMessageApi {
                 log.info(response);
 
                 notificationRepository.save(
-                        Notification.of(notificationId, dto));
+                        Notification.from(notificationId, dto));
             } catch (FirebaseMessagingException e){
-                log.error("failed send message to customers: error info : " );
-                e.getMessage();
                 throw new OmcException(FAILED_SEND_MESSAGE);
             }
         }
@@ -65,8 +63,6 @@ public class FirebaseCloudMessageApi {
                 .putData(NOTIFICATION_ID, notificationId)
                 .putData(RECEIVER_NICKNAME, dto.getCustomer().getNickname())
                 .putData(NOTIFICATION_TYPE, dto.getNotificationType().name())
-                .putData(PAGE_TYPE, dto.getPageType().name())
-                .putData(PAGE_ID, dto.getPageId().toString())
                 .putData(NOTIFICATION_DETAILS, dto.getNotificationDetails().name())
                 .putData(NOTIFIED_AT, dto.getNotifiedAt().toString())
                 .build();

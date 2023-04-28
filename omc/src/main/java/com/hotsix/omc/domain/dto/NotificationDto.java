@@ -1,11 +1,10 @@
-package com.hotsix.omc.notification.dto;
+package com.hotsix.omc.domain.dto;
 
 
 import com.hotsix.omc.domain.entity.Customer;
-import com.hotsix.omc.notification.type.NotificationDetails;
-import com.hotsix.omc.notification.type.NotificationStatus;
-import com.hotsix.omc.notification.type.NotificationType;
-import com.hotsix.omc.notification.type.PageType;
+import com.hotsix.omc.domain.entity.type.NotificationDetails;
+import com.hotsix.omc.domain.entity.type.NotificationStatus;
+import com.hotsix.omc.domain.entity.type.NotificationType;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -20,8 +19,6 @@ public class NotificationDto {
     private List<String> tokens;
     private Customer customer;
     private NotificationType notificationType;
-    private PageType pageType;
-    private Long pageId;
     private NotificationDetails notificationDetails;
     private NotificationStatus notificationStatus;
     private LocalDateTime notifiedAt;

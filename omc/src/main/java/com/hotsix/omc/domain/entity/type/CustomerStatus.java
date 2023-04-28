@@ -1,4 +1,4 @@
-package com.hotsix.omc.domain.entity;
+package com.hotsix.omc.domain.entity.type;
 
 public enum CustomerStatus {
     AUTHORIZED, UNAUTHORIZED

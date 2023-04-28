@@ -24,7 +24,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private final static String PATH = "path";
     private final static String UNAUTHORIZED_ERROR = "unauthorized";
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         log.info(getClass().getSimpleName());
         final Map<String, Object> body = new HashMap<>();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

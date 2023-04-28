@@ -1,16 +1,18 @@
-package com.hotsix.omc.notification.domain;
+package com.hotsix.omc.domain.entity;
 
-import com.hotsix.omc.domain.entity.BaseEntity;
-import com.hotsix.omc.domain.entity.Customer;
-import com.hotsix.omc.notification.dto.NotificationDto;
-import com.hotsix.omc.notification.type.NotificationDetails;
-import com.hotsix.omc.notification.type.NotificationStatus;
-import com.hotsix.omc.notification.type.NotificationType;
-import com.hotsix.omc.notification.type.PageType;
+import com.hotsix.omc.domain.dto.NotificationDto;
+import com.hotsix.omc.domain.entity.type.NotificationDetails;
+import com.hotsix.omc.domain.entity.type.NotificationStatus;
+import com.hotsix.omc.domain.entity.type.NotificationType;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+
+/**
+ * 알람 자체에 대한 테이블
+ * 회원과 매핑된 알람의 허용 여부는 NotificationInfo 테이블
+ */
 
 @Getter
 @Setter
@@ -30,21 +32,16 @@ public class Notification extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private NotificationType notificationType;
     @Enumerated(EnumType.STRING)
-    private PageType pageType;
-    private Long pageId;
-    @Enumerated(EnumType.STRING)
     private NotificationDetails notificationDetails;
     @Enumerated(EnumType.STRING)
     private NotificationStatus notificationStatus;
     private LocalDateTime notifiedAt;
 
-    public static Notification of(String notificationId, NotificationDto dto){
+    public static Notification from(String notificationId, NotificationDto dto){
         return Notification.builder()
                 .receiver(dto.getCustomer())
                 .notificationId(notificationId)
                 .notificationType(dto.getNotificationType())
-                .pageType(dto.getPageType())
-                .pageId(dto.getPageId())
                 .notificationDetails(dto.getNotificationDetails())
                 .notificationStatus(dto.getNotificationStatus())
                 .notifiedAt(dto.getNotifiedAt())
