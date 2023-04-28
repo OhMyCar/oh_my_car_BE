@@ -5,6 +5,7 @@ import com.hotsix.omc.components.MailComponents;
 import com.hotsix.omc.config.jwt.JwtTokenProvider;
 import com.hotsix.omc.domain.dto.StoreDto;
 import com.hotsix.omc.domain.entity.*;
+import com.hotsix.omc.domain.entity.type.Address;
 import com.hotsix.omc.domain.form.seller.SellerSignupForm;
 import com.hotsix.omc.domain.form.seller.StoreRegisterForm;
 import com.hotsix.omc.domain.form.seller.StoreRegisterForm.Response;
@@ -31,7 +32,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.hotsix.omc.domain.entity.CustomerStatus.UNAUTHORIZED;
+import static com.hotsix.omc.domain.entity.type.CustomerStatus.UNAUTHORIZED;
 import static com.hotsix.omc.exception.ErrorCode.*;
 import static com.hotsix.omc.exception.ErrorCode.PASSWORD_NOT_MATCH;
 

@@ -1,6 +1,6 @@
 package com.hotsix.omc.controller;
 
-import com.hotsix.omc.domain.dto.FileDetail;
+import com.hotsix.omc.s3.dto.FileDetailDto;
 import com.hotsix.omc.service.FileUploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ public class UploadController {
     private final FileUploadService fileUploadService;
 
     @PostMapping
-    public ResponseEntity<FileDetail> post(
+    public ResponseEntity<FileDetailDto> post(
             @RequestPart("file") MultipartFile multipartFile) {
         return ResponseEntity.ok(fileUploadService.save(multipartFile));
     }

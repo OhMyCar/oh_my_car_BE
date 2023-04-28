@@ -1,6 +1,7 @@
 package com.hotsix.omc.service;
 
-import com.hotsix.omc.domain.dto.FileDetail;
+import com.hotsix.omc.s3.dto.FileDetailDto;
+import com.hotsix.omc.s3.storage.AmazonS3ResourceStorage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,8 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileUploadService {
     private final AmazonS3ResourceStorage amazonS3ResourceStorage;
 
-    public FileDetail save(MultipartFile multipartFile) {
-        FileDetail fileDetail = FileDetail.multipartOf(multipartFile);
+    public FileDetailDto save(MultipartFile multipartFile) {
+        FileDetailDto fileDetail = FileDetailDto.multipartOf(multipartFile);
         amazonS3ResourceStorage.store(fileDetail.getPath(), multipartFile);
         return fileDetail;
     }

@@ -1,6 +1,6 @@
 package com.hotsix.omc.domain.form.seller;
 
-import com.hotsix.omc.domain.entity.Category;
+import com.hotsix.omc.domain.entity.type.Category;
 import lombok.*;
 
 import javax.validation.constraints.Email;

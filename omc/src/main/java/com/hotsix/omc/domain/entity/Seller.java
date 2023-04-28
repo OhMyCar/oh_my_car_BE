@@ -1,5 +1,6 @@
 package com.hotsix.omc.domain.entity;
 
+import com.hotsix.omc.domain.entity.type.CustomerStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
