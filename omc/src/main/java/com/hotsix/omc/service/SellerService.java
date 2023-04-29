@@ -171,10 +171,10 @@ public class SellerService implements UserDetailsService {
     public void saveStoreLocation(Store store, Address address) {
         String fullAddress = address.getFullAddress(address);
         String geoJsonString = kakaoMapsService.getGeoJson(fullAddress);
-        Map<String, Object> geocodeData = kakaoMapsService.parseGeocode(geoJsonString);
+        Map<String, Double> geocodeData = kakaoMapsService.parseGeocode(geoJsonString);
 
-        store.setLatitude((Double) geocodeData.get("latitude"));
-        store.setLongitude((Double) geocodeData.get("longitude"));
+        store.setLatitude(geocodeData.get("latitude"));
+        store.setLongitude(geocodeData.get("longitude"));
 
     }
 

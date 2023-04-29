@@ -84,7 +84,7 @@ class SellerServiceTest {
         when(sellerRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(seller));
         when(storeRepository.save(any(Store.class))).thenReturn(new Store());
         String geoJsonString = "{}";
-        Map<String, Object> geocodeData = new HashMap<>();
+        Map<String, Double> geocodeData = new HashMap<>();
         geocodeData.put("latitude", 37.49);
         geocodeData.put("longitude", 127.03);
         when(kakaoMapsService.getGeoJson(any())).thenReturn(geoJsonString);

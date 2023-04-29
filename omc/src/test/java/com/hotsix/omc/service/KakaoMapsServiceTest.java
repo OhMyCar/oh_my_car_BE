@@ -27,7 +27,7 @@ public class KakaoMapsServiceTest {
     public void testGetLatLnt() {
 
         String geoJsonString = kakaoMapsService.getGeoJson(fullAddress);
-        Map<String, Object> geocodeData = kakaoMapsService.parseGeocode(geoJsonString);
+        Map<String, Double> geocodeData = kakaoMapsService.parseGeocode(geoJsonString);
 
         assertThat(geocodeData).containsKeys("longitude", "latitude");
         assertEquals(geocodeData.get("longitude").toString().substring(0, 3), ("127"));
