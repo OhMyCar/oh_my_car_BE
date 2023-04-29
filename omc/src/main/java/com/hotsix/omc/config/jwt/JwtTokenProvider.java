@@ -2,9 +2,13 @@ package com.hotsix.omc.config.jwt;
 
 
 import com.hotsix.omc.domain.form.token.TokenInfo;
+import com.hotsix.omc.service.CustomerService;
+import com.hotsix.omc.service.SellerService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
+
 public class JwtTokenProvider {
     private final Key key;
     private final long TOKEN_EXPIRE_TIME;
@@ -90,7 +95,8 @@ public class JwtTokenProvider {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        UserDetails principal =
+                new User(claims.getSubject(), "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
