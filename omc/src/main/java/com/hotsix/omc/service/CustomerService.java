@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -35,6 +36,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class CustomerService implements UserDetailsService {
     private final CustomerRepository customerRepository;
@@ -84,18 +86,21 @@ public class CustomerService implements UserDetailsService {
 
 
     public TokenInfo login(String email, String password){
+        log.info("로그인 시작===================================================================================");
         // id, pw 기반 Authentication 객체생성
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(email, password);
+                new UsernamePasswordAuthenticationToken(email, password, List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER")));
 
         // 검증 (비밀번호 확인)
-        // authenticate 실행 될 때 loadByUserByUsername 실행
         validateEmailAndPassword(email, password);
-        Authentication authentication = authenticationManagerBuilder
-                .getObject()
-                .authenticate(authenticationToken);
 
-        return tokenProvider.generateToken(authentication);
+        // TODO loadUserByUsername 메서드 안돌아가는 부분 수정 필요함. 현재는 UsernamePasswordAuthenticationToken 에 파라미터 추가하여 진행했음.
+        // authenticate 실행 될 때 loadByUserByUsername 실행
+//        Authentication authentication = authenticationManagerBuilder
+//                .getObject()
+//                .authenticate(authenticationToken);
+
+        return tokenProvider.generateToken(authenticationToken);
     }
 
     private void validateEmailAndPassword(String email, String password) {
@@ -108,13 +113,16 @@ public class CustomerService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) {
-        Customer customer = customerRepository.findByEmail(email)
+    public UserDetails loadUserByUsername(String username) {
+        log.info("ClubUserDetailsService loadUserByUsername"+username+"=================@@@@@@@@@@@==============");
+        Customer customer = customerRepository.findByEmail(username)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException("EMAiL NOT FOUND -> " + email));
+                        new UsernameNotFoundException("EMAiL NOT FOUND -> " + username));
             List<GrantedAuthority> customerGrantedAuthorities = new ArrayList<>();
             customerGrantedAuthorities.add(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
 
+
+            //User (userName, password, Collection<? extends GrantedAuthority> authorities)
             return new User(customer.getEmail(),
                     customer.getPassword(),
                     customerGrantedAuthorities);

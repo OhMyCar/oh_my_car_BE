@@ -15,6 +15,7 @@ import com.hotsix.omc.exception.UsersException;
 import com.hotsix.omc.repository.SellerRepository;
 import com.hotsix.omc.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -37,6 +38,7 @@ import static com.hotsix.omc.exception.ErrorCode.*;
 import static com.hotsix.omc.exception.ErrorCode.PASSWORD_NOT_MATCH;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class SellerService implements UserDetailsService {
     private final SellerRepository sellerRepository;
@@ -88,16 +90,12 @@ public class SellerService implements UserDetailsService {
     public TokenInfo login(String email, String password){
         // id, pw 기반 Authentication 객체생성
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(email, password);
+                new UsernamePasswordAuthenticationToken(email, password, List.of(new SimpleGrantedAuthority("ROLE_SELLER")));
 
         // 검증 (비밀번호 확인)
-        // authenticate 실행 될 때 loadByUserByUsername 실행
         validateEmailAndPassword(email, password);
-        Authentication authentication = authenticationManagerBuilder
-                .getObject()
-                .authenticate(authenticationToken);
-
-        return tokenProvider.generateToken(authentication);
+        // authenticate 실행 될 때 loadByUserByUsername 실행
+        return tokenProvider.generateToken(authenticationToken);
     }
 
     private void validateEmailAndPassword(String email, String password) {
@@ -110,10 +108,11 @@ public class SellerService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) {
-        Seller seller = sellerRepository.findByEmail(email)
+    public UserDetails loadUserByUsername(String username) {
+
+        Seller seller = sellerRepository.findByEmail(username)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException("EMAiL NOT FOUND -> " + email));
+                        new UsernameNotFoundException("EMAiL NOT FOUND -> " + username));
         List<GrantedAuthority> customerGrantedAuthorities = new ArrayList<>();
         customerGrantedAuthorities.add(new SimpleGrantedAuthority("ROLE_SELLER"));
 
