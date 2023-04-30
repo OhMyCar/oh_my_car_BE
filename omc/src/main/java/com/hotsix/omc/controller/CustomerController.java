@@ -1,5 +1,6 @@
 package com.hotsix.omc.controller;
 
+import com.hotsix.omc.domain.form.customer.CarInfoForm;
 import com.hotsix.omc.domain.form.customer.CustomerLoginForm;
 import com.hotsix.omc.domain.form.customer.CustomerReviewForm;
 import com.hotsix.omc.domain.form.customer.CustomerSignupForm.Request;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CustomerController {
     private final CustomerService customerService;
     private final ReviewService reviewService;
+
     @PostMapping("/signup")
     public ResponseEntity<Response> registerMember(
             @RequestBody @Valid Request request) {
@@ -59,17 +61,23 @@ public class CustomerController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<CustomerUpdateForm.Response> update(@RequestHeader String token, @RequestBody @Valid CustomerUpdateForm.Request request, @PathVariable Long id) {
+    public ResponseEntity<CustomerUpdateForm.Response> update(
+            @RequestHeader String token,
+            @RequestBody @Valid CustomerUpdateForm.Request request,
+            @PathVariable Long id) {
         return ResponseEntity.ok(customerService.update(request, id));
     }
 
     @PostMapping("/review")
-    public ResponseEntity<CustomerReviewForm.Response> addReview(@RequestBody CustomerReviewForm.Request request) throws Exception {
+    public ResponseEntity<CustomerReviewForm.Response> addReview(
+            @RequestBody CustomerReviewForm.Request request) throws Exception {
         return ResponseEntity.ok(reviewService.addCustomerReview(request));
     }
 
     @PutMapping("/review/update/{reviewId}")
-    public ResponseEntity<CustomerReviewForm.Response> updateReview(@RequestBody CustomerReviewForm.Request request, @PathVariable Long reviewId) {
+    public ResponseEntity<CustomerReviewForm.Response> updateReview(
+            @RequestBody CustomerReviewForm.Request request,
+            @PathVariable Long reviewId) {
         return ResponseEntity.ok(reviewService.updateCustomerReview(request, reviewId));
     }
 
@@ -77,5 +85,26 @@ public class CustomerController {
     public ResponseEntity<?> deleteReview(@PathVariable Long reviewId) {
         reviewService.deleteReview(reviewId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/car")
+    public ResponseEntity<CarInfoForm.Response> registerCar(
+            @RequestHeader String token,
+            @RequestBody CarInfoForm.Request request){
+        return ResponseEntity.ok(customerService.carRegister(request));
+    }
+
+    @PutMapping("/car/update/{carId}")
+    public ResponseEntity<CarInfoForm.Response> updateCar(
+            @RequestBody CarInfoForm.Request request,
+            @PathVariable Long carId) {
+        return ResponseEntity.ok(customerService.updateCarInfo(request, carId));
+    }
+
+    @DeleteMapping("/car/delete/{carId}")
+    public ResponseEntity<CarInfoForm.Response> deleteCar(
+            @RequestBody CarInfoForm.Request request,
+            @PathVariable Long carId) {
+        return ResponseEntity.ok(customerService.deleteCar(request, carId));
     }
 }

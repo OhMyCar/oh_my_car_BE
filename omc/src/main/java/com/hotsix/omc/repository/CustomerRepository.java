@@ -11,5 +11,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     Optional<Customer> findByEmail(String email);
     Optional<Customer> findByEmailAuthKey(String uuid);
-    boolean findByNotificationPermit(boolean notificationPermit);
+    Optional<Customer> findCustomerByReservation(Long reservationId);
+    Optional<Customer> findCustomerByReview(Long reviewId);
 }

@@ -22,4 +22,17 @@ public class NotificationDto {
     private NotificationDetails notificationDetails;
     private NotificationStatus notificationStatus;
     private LocalDateTime notifiedAt;
+
+
+    public static NotificationDto from (String tokens, Customer customer,
+                                        NotificationType notificationType,
+                                        NotificationDetails notificationDetails) {
+        return NotificationDto.builder()
+                .tokens(List.of(tokens))
+                .customer(customer)
+                .notificationType(notificationType)
+                .notificationDetails(notificationDetails)
+                .notifiedAt(LocalDateTime.now())
+                .build();
+    }
 }
