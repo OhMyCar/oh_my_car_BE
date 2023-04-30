@@ -160,10 +160,14 @@ public class CustomerService implements UserDetailsService {
 
     // 내 차 등록 기능
     public CarInfoForm.Response carRegister(CarInfoForm.Request request){
-        carRepository.save(Car.builder()
-                        .nickname(request.getNickname())
-                        .distance(request.getDistance())
-                        .build());
+        Car car = carRepository.save(Car.builder()
+                .nickname(request.getNickname())
+                .distance(request.getDistance())
+                .build());
+
+        Customer customer = customerRepository.findCustomerByCars(car.getId())
+                        .orElseThrow(() -> new UsersException(USER_NOT_EXIST));
+        eventPublisher.publishEvent(new InspectionEvent(customer, request.getNickname(), request.getLastModifiedAt()));
         return CarInfoForm.Response.from(request);
     }
 
@@ -175,6 +179,11 @@ public class CustomerService implements UserDetailsService {
         car.setNickname(request.getNickname());
         car.setDistance(request.getDistance());
         carRepository.save(car);
+
+        Customer customer = customerRepository.findCustomerByCars(car.getId())
+                .orElseThrow(() -> new UsersException(USER_NOT_EXIST));
+
+        eventPublisher.publishEvent(new InspectionEvent(customer, request.getNickname(), request.getLastModifiedAt()));
 
 
         return CarInfoForm.Response.from(request);

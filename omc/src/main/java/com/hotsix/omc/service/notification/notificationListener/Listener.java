@@ -3,15 +3,11 @@ package com.hotsix.omc.service.notification.notificationListener;
 import com.hotsix.omc.domain.dto.NotificationDto;
 import com.hotsix.omc.domain.entity.Customer;
 import com.hotsix.omc.domain.entity.NotificationPermit;
-import com.hotsix.omc.domain.entity.Store;
 import com.hotsix.omc.domain.entity.type.NotificationDetails;
-import com.hotsix.omc.domain.entity.type.NotificationStatus;
 import com.hotsix.omc.domain.entity.type.NotificationType;
 import com.hotsix.omc.fcm.FirebaseCloudMessageApi;
-import com.hotsix.omc.repository.CarRepository;
 import com.hotsix.omc.repository.NotificationPermitRepository;
-import com.hotsix.omc.repository.ReservationRepository;
-import com.hotsix.omc.repository.ReviewRepository;
+import com.hotsix.omc.service.notification.event.InspectionEvent;
 import com.hotsix.omc.service.notification.event.ReservationEvent;
 import com.hotsix.omc.service.notification.event.ReviewEvent;
 import lombok.RequiredArgsConstructor;
@@ -113,6 +109,32 @@ public class Listener {
         } catch (Exception e) {
             log.error("cancel 알람 {}", e.getMessage(), e);
         }
+    }
 
+    @EventListener
+    public void carUpdateRequest(InspectionEvent inspectionEvent) {
+        try {
+            Customer receiver = inspectionEvent.getCustomer();
+            Optional<NotificationPermit> optionalNotificationPermit =
+                    notificationPermitRepository.findByCustomerId(receiver.getId());
+            if (optionalNotificationPermit.isEmpty()) {
+                log.error(receiver.getNickname() + "님의 알람정보가 없습니다.");
+            }
+
+            LocalDateTime now = LocalDateTime.now();
+            NotificationPermit notificationPermit = optionalNotificationPermit.get();
+            if (notificationPermit.isNotificationPermit()
+                    && inspectionEvent.getLastModifiedAt() == now.plusDays(30)) {
+                firebaseCloudMessageApi.sendNotification(
+                        NotificationDto.from(
+                                notificationPermit.getFcmToken(),
+                                receiver, NotificationType.CAR_INSPECTION,
+                                NotificationDetails.UPDATE_CAR_INFO)
+                );
+            }
+        } catch (Exception e) {
+            log.error("cancel 알람 {}", e.getMessage(), e);
+        }
     }
 }
+
