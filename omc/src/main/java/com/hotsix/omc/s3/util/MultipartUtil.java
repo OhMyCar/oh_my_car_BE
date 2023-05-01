@@ -1,4 +1,4 @@
-package com.hotsix.omc.util;
+package com.hotsix.omc.s3.util;
 
 import org.springframework.util.StringUtils;
 
