@@ -1,4 +1,4 @@
-package com.hotsix.omc.controller;
+package com.hotsix.omc.s3.controller;
 
 import com.hotsix.omc.s3.dto.FileDetailDto;
 import com.hotsix.omc.service.FileUploadService;

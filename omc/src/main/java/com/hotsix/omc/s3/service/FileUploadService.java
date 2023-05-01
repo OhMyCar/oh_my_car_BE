@@ -1,4 +1,4 @@
-package com.hotsix.omc.service;
+package com.hotsix.omc.s3.service;
 
 import com.hotsix.omc.s3.dto.FileDetailDto;
 import com.hotsix.omc.s3.storage.AmazonS3ResourceStorage;
