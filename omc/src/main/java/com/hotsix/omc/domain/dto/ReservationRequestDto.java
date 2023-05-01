@@ -12,6 +12,7 @@ import java.time.LocalDate;
 public class ReservationRequestDto {
     private Long customerId;
     private Long storeId;
+    private Long carId;
     private String details;
     private LocalDate serviceDate;
     private String serviceStartHour;

@@ -23,6 +23,9 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "STORE_ID")
     private Store store;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CAR_ID")
+    private Car car;
     private LocalDateTime reservedAt;
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;

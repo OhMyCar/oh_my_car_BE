@@ -12,9 +12,14 @@ import com.hotsix.omc.exception.UsersException;
 import com.hotsix.omc.repository.CustomerRepository;
 import com.hotsix.omc.repository.ReviewRepository;
 import com.hotsix.omc.repository.StoreRepository;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.hotsix.omc.service.notification.event.ReviewEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,6 +29,7 @@ public class ReviewService {
 	private final ReviewRepository reviewRepository;
 	private final CustomerRepository customerRepository;
 	private final StoreRepository storeRepository;
+	private final ApplicationEventPublisher eventPublisher;
 
 	public Response addCustomerReview(CustomerReviewForm.Request request) {
 
@@ -108,6 +114,13 @@ public class ReviewService {
 
 		review.setReply(request.getReply());
 		reviewRepository.save(review);
+		Store store = storeRepository.findByReviewId(reviewId)
+						.orElseThrow(() -> new UsersException(ErrorCode.REVIEW_NOT_EXIST));
+		LocalDateTime now = LocalDateTime.now();
+
+		Customer customer = customerRepository.findById(request.getCustomerId())
+						.orElseThrow(() -> new UsersException(ErrorCode.USER_NOT_EXIST));
+		eventPublisher.publishEvent(new ReviewEvent(customer, store, now));
 
 		return StoreReviewForm.Response.from(request);
 	}

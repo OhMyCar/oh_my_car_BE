@@ -1,30 +1,35 @@
 package com.hotsix.omc.service;
 
 import static com.hotsix.omc.domain.entity.type.CustomerStatus.UNAUTHORIZED;
-import static com.hotsix.omc.exception.ErrorCode.ALREADY_EXIST_USER;
-import static com.hotsix.omc.exception.ErrorCode.BAD_REQUEST;
-import static com.hotsix.omc.exception.ErrorCode.EMAIL_NOT_EXIST;
-import static com.hotsix.omc.exception.ErrorCode.PASSWORD_NOT_MATCH;
+import static com.hotsix.omc.exception.ErrorCode.*;
 
 import com.hotsix.omc.components.MailComponents;
 import com.hotsix.omc.config.jwt.JwtTokenProvider;
+import com.hotsix.omc.domain.entity.Car;
 import com.hotsix.omc.domain.entity.Customer;
+import com.hotsix.omc.domain.form.customer.CarInfoForm;
 import com.hotsix.omc.domain.form.customer.CustomerSignupForm;
 import com.hotsix.omc.domain.form.customer.CustomerSignupForm.Response;
 import com.hotsix.omc.domain.form.customer.CustomerUpdateForm;
 import com.hotsix.omc.domain.form.token.TokenInfo;
+import com.hotsix.omc.exception.OmcException;
 import com.hotsix.omc.exception.UsersException;
+import com.hotsix.omc.repository.CarRepository;
 import com.hotsix.omc.repository.CustomerRepository;
 import com.hotsix.omc.repository.SellerRepository;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import com.hotsix.omc.service.notification.event.InspectionEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -45,6 +50,10 @@ public class CustomerService implements UserDetailsService {
     private final SellerRepository sellerRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
+    private final CarRepository carRepository;
+    private final ApplicationEventPublisher eventPublisher;
+
+
 
     public Response register(CustomerSignupForm.Request request) {
         Optional<Customer> optionalCustomer = customerRepository.findByEmail(request.getEmail());
@@ -147,6 +156,46 @@ public class CustomerService implements UserDetailsService {
         customerRepository.save(customer);
 
         return CustomerUpdateForm.Response.from(customer);
+    }
+
+    // 내 차 등록 기능
+    public CarInfoForm.Response carRegister(CarInfoForm.Request request){
+        Car car = carRepository.save(Car.builder()
+                .nickname(request.getNickname())
+                .distance(request.getDistance())
+                .build());
+
+        Customer customer = customerRepository.findCustomerByCars(car.getId())
+                        .orElseThrow(() -> new UsersException(USER_NOT_EXIST));
+        eventPublisher.publishEvent(new InspectionEvent(customer, request.getNickname(), request.getLastModifiedAt()));
+        return CarInfoForm.Response.from(request);
+    }
+
+    // 내 차 정보 수정 기능
+    public CarInfoForm.Response updateCarInfo (CarInfoForm.Request request, Long carId){
+        Car car = carRepository.findById(carId)
+                        .orElseThrow(() -> new UsersException(CAR_NOT_FOUND));
+
+        car.setNickname(request.getNickname());
+        car.setDistance(request.getDistance());
+        carRepository.save(car);
+
+        Customer customer = customerRepository.findCustomerByCars(car.getId())
+                .orElseThrow(() -> new UsersException(USER_NOT_EXIST));
+
+        eventPublisher.publishEvent(new InspectionEvent(customer, request.getNickname(), request.getLastModifiedAt()));
+
+
+        return CarInfoForm.Response.from(request);
+    }
+
+    // 내 차량 정보 삭제 기능
+    public CarInfoForm.Response deleteCar (CarInfoForm.Request request, Long carId){
+        Car car = carRepository.findById(carId)
+                .orElseThrow(() -> new UsersException(CAR_NOT_FOUND));
+
+        carRepository.delete(car);
+        return CarInfoForm.Response.from(request);
     }
 
 

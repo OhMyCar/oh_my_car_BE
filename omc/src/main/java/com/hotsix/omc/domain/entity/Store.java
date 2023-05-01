@@ -29,7 +29,9 @@ public class Store extends BaseEntity {
     private String name;
     private String tel;
     @OneToMany(mappedBy = "store")
-    private List<Reservation> reservations = new ArrayList<>();
+    private List<Review> review = new ArrayList<>();
+    @OneToMany(mappedBy = "store")
+    private List<Reservation> reservation = new ArrayList<>();
     @Embedded
     private Address address;
     @ElementCollection

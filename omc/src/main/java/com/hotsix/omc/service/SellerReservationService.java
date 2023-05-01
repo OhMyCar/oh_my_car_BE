@@ -1,12 +1,16 @@
 package com.hotsix.omc.service;
 
 import com.hotsix.omc.domain.dto.ReservationStoreResponseDto;
+import com.hotsix.omc.domain.entity.Customer;
 import com.hotsix.omc.domain.entity.Reservation;
 import com.hotsix.omc.domain.entity.ReservationStatus;
 import com.hotsix.omc.domain.entity.Store;
+import com.hotsix.omc.repository.CustomerRepository;
 import com.hotsix.omc.repository.ReservationRepository;
 import com.hotsix.omc.repository.StoreRepository;
+import com.hotsix.omc.service.notification.event.ReservationEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,12 +18,15 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class SellerReservationService {
     private final ReservationRepository reservationRepository;
     private final StoreRepository storeRepository;
+    private final ApplicationEventPublisher eventPublisher;
+    private final CustomerRepository customerRepository;
 
     public ReservationStoreResponseDto confirmReservation(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
@@ -40,6 +47,10 @@ public class SellerReservationService {
 
         reservation.setStatus(ReservationStatus.CONFIRM);
         reservationRepository.save(reservation);
+        Optional<Customer> optionalCustomer = customerRepository.findCustomerByReservation(reservationId);
+        Customer customer = optionalCustomer.get();
+
+        eventPublisher.publishEvent(new ReservationEvent(customer, reservation.getStore(), reservation.getReservedAt()));
 
         return ReservationStoreResponseDto.builder()
                 .customerId(reservation.getCustomer().getId())
@@ -66,6 +77,9 @@ public class SellerReservationService {
 
         reservation.setStatus(ReservationStatus.CANCEL);
         reservationRepository.save(reservation);
+        Optional<Customer> optionalCustomer = customerRepository.findCustomerByReservation(reservationId);
+        Customer customer = optionalCustomer.get();
+        eventPublisher.publishEvent(new ReservationEvent(customer, reservation.getStore(), reservation.getReservedAt()));
 
         return ReservationStoreResponseDto.builder()
                 .customerId(reservation.getCustomer().getId())
@@ -120,6 +134,10 @@ public class SellerReservationService {
 
         reservation.setStatus(ReservationStatus.FINISH);
         reservationRepository.save(reservation);
+        Optional<Customer> optionalCustomer = customerRepository.findCustomerByReservation(reservationId);
+        Customer customer = optionalCustomer.get();
+
+        eventPublisher.publishEvent(new ReservationEvent(customer, reservation.getStore(), reservation.getReservedAt()));
 
         return ReservationStoreResponseDto.builder()
                 .customerId(reservation.getCustomer().getId())

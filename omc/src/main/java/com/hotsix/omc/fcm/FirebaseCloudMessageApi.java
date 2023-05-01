@@ -24,7 +24,7 @@ public class FirebaseCloudMessageApi {
     private final NotificationRepository notificationRepository;
     private static final String REPLACE_HYPHEN = "-";
 
-    public void sendNotificationByToken(NotificationDto dto){
+    public void sendNotification(NotificationDto dto){
 
         for(String token : dto.getTokens()) {
             WebpushConfig webpushConfig = WebpushConfig.builder()

@@ -1,16 +1,18 @@
 package com.hotsix.omc.service;
 
-import com.hotsix.omc.domain.entity.Customer;
-import com.hotsix.omc.domain.entity.Reservation;
-import com.hotsix.omc.domain.entity.ReservationStatus;
-import com.hotsix.omc.domain.entity.Store;
+import com.hotsix.omc.domain.entity.*;
 import com.hotsix.omc.domain.dto.ReservationRequestDto;
 import com.hotsix.omc.domain.dto.ReservationResponseDto;
 import com.hotsix.omc.domain.dto.ReservationStoreResponseDto;
+import com.hotsix.omc.exception.ErrorCode;
+import com.hotsix.omc.exception.OmcException;
+import com.hotsix.omc.repository.CarRepository;
 import com.hotsix.omc.repository.CustomerRepository;
 import com.hotsix.omc.repository.ReservationRepository;
 import com.hotsix.omc.repository.StoreRepository;
+import com.hotsix.omc.service.notification.event.ReservationEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,8 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final CustomerRepository customerRepository;
     private final StoreRepository storeRepository;
+    private final CarRepository carRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public ReservationResponseDto reserve(ReservationRequestDto reservationRequestDto) {
         Customer customer = customerRepository.findById(reservationRequestDto.getCustomerId())
@@ -36,9 +41,13 @@ public class ReservationService {
         Store store = storeRepository.findById(reservationRequestDto.getStoreId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid store id"));
 
+        Car car = carRepository.findById(reservationRequestDto.getCarId())
+                .orElseThrow(() -> new OmcException(ErrorCode.CAR_NOT_FOUND));
+
         Reservation reservation = Reservation.builder()
                 .customer(customer)
                 .store(store)
+                .car(car)
                 .reservedAt(LocalDateTime.of(LocalDate.now(), LocalTime.now().withSecond(0).withNano(0)))
                 .status(ReservationStatus.REQUEST)
                 .details(reservationRequestDto.getDetails())
@@ -55,10 +64,12 @@ public class ReservationService {
                     .status(savedReservation.getStatus())
                     .build();
 
+
+            applicationEventPublisher.publishEvent(new ReservationEvent(customer, savedReservation.getStore(), savedReservation.getReservedAt()));
+
             return reservationResponseDto;
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Failed to save reservation information", e);
-
         }
     }
 
